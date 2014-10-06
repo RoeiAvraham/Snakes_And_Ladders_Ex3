@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="snakesandladders">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="players" type="players"/>
+                <xs:element name="board" type="board"/>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="number_of_soldiers" type="number_of_soldiers" use="required"/>
+            <xs:attribute name="current_player" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:simpleType name="number_of_soldiers">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="4"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="players">
+        <xs:sequence minOccurs="2" maxOccurs="4">
+            <xs:element name="player">
+                <xs:complexType>
+                    <xs:attributeGroup ref="player"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:attributeGroup name="player">
+        <xs:attribute name="type" type="playerType" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:attributeGroup>
+    
+    <xs:simpleType name="playerType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="HUMAN"/>
+            <xs:enumeration value="COMPUTER"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:complexType name="board">
+        <xs:sequence minOccurs="1" maxOccurs="1">
+            <xs:element name="cells" type="cells"/>
+            <xs:element name="ladders" type="ladders"/>
+            <xs:element name="snakes" type="snakes"/>
+        </xs:sequence>
+        <xs:attribute name="size" type="board_size" use="required"/> 
+    </xs:complexType>
+    
+    <xs:complexType name="cells">
+        <xs:sequence minOccurs="1" maxOccurs="64">
+            <xs:element name="cell" type="cell"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="ladders">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="ladder">
+                <xs:complexType>
+                    <xs:attributeGroup ref="passage"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="snakes">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="snake">
+                <xs:complexType>
+                    <xs:attributeGroup ref="passage"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:attributeGroup name="passage">
+        <xs:attribute name="from" type="xs:positiveInteger" use="required"/>
+        <xs:attribute name="to" type="xs:positiveInteger" use="required"/>
+    </xs:attributeGroup>
+    
+    <xs:simpleType name="board_size">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="5"/>
+            <xs:maxInclusive value="8"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:complexType name="cell">
+        <xs:sequence minOccurs="0" maxOccurs="4">
+            <xs:element name="soldiers">
+                <xs:complexType>
+                    <xs:attribute name="playerName" type="xs:string" use="required"/>
+                    <xs:attribute name="count" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:positiveInteger">
+                                <xs:minInclusive value="1"/>
+                                <xs:maxInclusive value="4"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="number" type="xs:positiveInteger" use="required"/>
+    </xs:complexType>
+        
+</xs:schema>

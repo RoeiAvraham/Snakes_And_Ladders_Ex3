@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Snakes and Ladders</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="css/snakesandladders.css">
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+        <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+        <script type="text/javascript" src="js/newGame.js"></script>
+    </head>
+    <body>
+        <div id="background">
+            <img src="images/backgroundPics/cloudlandscape.jpg" class="stretch" alt="" />
+        </div>
+        <div id="mainDiv" class="container">
+            <img class="center-block" src="images/headlinePics/logo.png" alt=""/>
+            <div class="text-center">
+                <h3><u>Please fill in the following settings:</u></h3><br>
+            </div>  
+            <form class="form-horizontal" id="gameForm" action="newgame" role="form">
+                <div class="form-group">
+                    <label  class="col-sm-5 control-label">Game Name:</label>
+                    <div class="col-sm-3">
+                        <input type="text" id="gameName" name="gameName" class="form-control" placeholder="Game Name">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label   class="col-sm-5 control-label">Your Name:</label>
+                    <div class="col-sm-3">
+                        <input id="playerName" name="playerName" type="text" class="form-control" placeholder="Your Name">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label  class="col-sm-5 control-label">Number of total players:</label>
+                    <div class="col-sm-3">
+                        <select id="numTotal" name="totalPlayers" class="form-control">
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>   
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label  class="col-sm-5 control-label">Number of human players:</label>
+                    <div class="col-sm-3">
+                        <select id="numHuman" name="humanPlayers" class="form-control">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>   
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label  class="col-sm-5 control-label">Board Size:</label>
+                    <div class="col-sm-3">
+                        <select id="boardSize" name="boardSize" class="form-control">                            
+                            <option value="5">5</option>
+                            <option value="6">6</option> 
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                        </select>   
+                    </div>
+                </div>    
+                <div class="form-group">
+                    <label  class="col-sm-5 control-label">Number of Snakes and Ladders:</label>
+                    <div class="col-sm-3">
+                        <select id="numSnakes" name="numSnakes" class="form-control">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option> 
+                        </select>   
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label  class="col-sm-5 control-label">Number of Soldiers to Win:</label>
+                    <div class="col-sm-3">
+                        <select name="numSoldiersToWin" class="form-control">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>   
+                    </div>
+                </div>
+                <div class="form-group text-center">
+                    <button id="createBtn" type="submit" class="btn btn-warning btn-lg custom" disabled>Create Game!</button>
+                </div>
+            </form>
+            
+        </div>
+    </body>
+</html>

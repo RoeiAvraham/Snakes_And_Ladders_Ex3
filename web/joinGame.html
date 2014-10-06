@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Snakes and Ladders</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="css/snakesandladders.css">
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+        <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+        <script type="text/javascript" src="js/joinGame.js"></script>
+        <script type="text/javascript" src="js/utilities.js"></script>
+    </head>
+    <body>
+        <div id="background">
+            <img src="images/backgroundPics/cloudlandscape.jpg" class="stretch" alt="" />
+        </div>
+        <div class="container-fluid">
+            <img class="center-block" src="images/headlinePics/logo.png" alt=""/>
+            <div class="text-center">
+                <h3><u>Please select a game to join to:</u></h3><br>
+            </div>
+            <div class="clearfix center-block text-center">
+                <form name="joinGameForm">
+                    <div class="input">
+                        <select id="gameslist" name="gameName" class="selectBox" data-style="btn-primary"  multiple="multiple">
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
