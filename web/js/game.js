@@ -159,11 +159,72 @@ function ajaxJoinedPlayerList()
     return false;
 }
 
+
 $(function()
 {
     $.ajaxSetup({cache: false});
     setInterval(ajaxJoinedPlayerList, refreshRate);
     getGameInfo();
-
+    
+    var isRunning = false;
+    $('.dice').click( function() {
+           if (isRunning)
+               return;
+           isRunning = true;
+           $(this).css('background-image','url(\'images/dicePics/rolling_dice.gif\')');
+           $(this).css('cursor','arrow');
+           var that = this;
+           setTimeout( function() {
+               $(that).css('background-image','url(\'images/dicePics/die1.png\')');
+               isRunning = false;
+               //$('[data-owner="nadav"]').blink();
+           }, 2000);
+           return false;
+    });
 
 });
+\*
+$('.soldier').click( function() {
+    
+    if (!$(this).attr('data-owner') == currentPlayerId)
+        return;
+            .
+            
+            .
+            .
+            
+});
+*\
+
+function Soldier() {
+    var myPrivateVar, myPrivateMethod;
+    // A private counter variable
+    myPrivateVar = 0;
+    // A private function which logs any arguments
+    myPrivateMethod = function( foo ) {
+        console.log( foo );
+    };
+    
+    return {
+        // A public variable
+        myPublicVar: "foo",
+        // A public function utilizing privates
+        myPublicFunction: function( bar ) {
+        // Increment our private counter
+        myPrivateVar++;
+        // Call our private method using bar
+        myPrivateMethod( bar );
+    }
+  };
+ 
+}
+
+x= new Soldier;
+x.myPublicFunction();
+
+function Soldier() {
+    this. 
+    this.owner;
+}
+var z = new MyClass();
+console.log(z.y);
