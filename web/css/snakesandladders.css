@@ -22,11 +22,9 @@ and open the template in the editor.
 }
 .snakesandladdersDiv
 {
-  position:absolute;
-  width: 688px;
-  height: 688px;
-  top: 0;
-  text-align: left;
+    position:absolute;
+    top: 0;
+    text-align: left;
 }
 /*.tableDiv{
     position: absolute;
@@ -55,12 +53,17 @@ a
 .boardMainDiv
 {
     position:relative;
-    width: 688px;
-    height: 688px;
     margin:auto;
-
+    text-align:left;
 }
 
+.dice
+{
+    position: absolute;
+    width:130px;
+    top:300px;
+    right: -300px;
+}
 td
 {
     width: 80px;
@@ -83,7 +86,7 @@ td
     width: 200px;
     height:  200px !important;
     background: linear-gradient(white,lightgrey);
-//    border-radius: 15px;
+    //    border-radius: 15px;
 }
 
 /*input {

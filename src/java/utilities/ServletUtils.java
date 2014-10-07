@@ -10,6 +10,8 @@ import model.Game;
 import model.GameManager;
 import model.Player;
 import model.Player.PlayerType;
+import servlets.GetGameInfoServlet;
+import servlets.GetGameInfoServlet.SnakeOrLadder;
 
 /**
  *
@@ -95,17 +97,18 @@ public class ServletUtils {
         return names;
     }
 
-    public static void buildLocationMapOfLadders(Game game, HashMap<String, Point> ladderMap, HashMap<String, Point> snakeMap) {
+    public static void buildLocationMapOfLadders(GetGameInfoServlet ggis, Game game, HashMap<String, SnakeOrLadder> ladderMap, HashMap<String, SnakeOrLadder> snakeMap) {
         int snakeCounter = 1;
         int ladderCounter = 1;
 
         for (Cell cell : game.getBoard().getCells()) {
             if (cell.getDest() != Cell.NO_DEST) {
                 if (cell.getCellNum() < cell.getDest()) {
-                    ladderMap.put("ladder" + ladderCounter, new Point(cell.getCellNum(),cell.getDest()));
+                //    ladderMap.put("ladder" + ladderCounter, new Point(cell.getCellNum(),cell.getDest()));
+                    ladderMap.put("ladder" + ladderCounter, ggis. new SnakeOrLadder(cell.getCellNum(), cell.getDest()));
                     ladderCounter++;
                 } else {
-                    snakeMap.put("snake" + snakeCounter, new Point(cell.getCellNum(),cell.getDest()));
+                    snakeMap.put("snake" + snakeCounter, ggis. new  SnakeOrLadder(cell.getCellNum(),cell.getDest()));
                     snakeCounter++;
                 }
             }
