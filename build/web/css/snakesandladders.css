@@ -23,8 +23,8 @@ and open the template in the editor.
 .snakesandladdersDiv
 {
   position:absolute;
-  width: 442px;
-  height: 442px;
+  width: 688px;
+  height: 688px;
   top: 0;
   text-align: left;
 }
@@ -55,8 +55,8 @@ a
 .boardMainDiv
 {
     position:relative;
-    width: 442px;
-    height: 442px;
+    width: 688px;
+    height: 688px;
     margin:auto;
 
 }

@@ -6,7 +6,6 @@
 
 var refreshRate = 2000; //miliseconds
 var CELL_WIDTH = 86;
-
 function getGameInfo()
 {
     $.ajax({
@@ -18,8 +17,7 @@ function getGameInfo()
         success: function(r) {
             document.title = 'Snakes And Ladders - ' + r.gameName.toString();
             drawBoard(r.boardSize);
-            placeSnakesAndLaddersOnBoard(r.snakeMap, r.ladderMap);
-
+            placeSnakesAndLaddersOnBoard(r.snakeMap, r.ladderMap, r.boardSize);
         }
     });
     return false;
@@ -51,7 +49,6 @@ function drawBoard(boardSize)
 
 function refreshPlayerList(r) {
     $("#playerList").empty();
-
     $.each(r.playerNames || [], function(index, playerName) {
         $('<option>' + playerName + "   -   " + r.playerTypes[index] + '</option>').appendTo($("#playerList"));
     });
@@ -62,37 +59,56 @@ function refreshPlayerList(r) {
 //
 //}
 
-function placeSnakesAndLaddersOnBoard(snakeMap, ladderMap)
+function placeSnakesAndLaddersOnBoard(snakeMap, ladderMap, boardSize)
 {
-
-
-    placeSnakesOnBoard(snakeMap);
-    placeLaddersOnBOard(ladderMap);
-
-//        
-//        for (Cell cell : model.getBoard().getCells())
-//        {
-//            if (cell.getDest() != Cell.NO_DEST)
-//            {
-//                if (cell.getCellNum() < cell.getDest())
-//                {
-//                    boardView.placeLadderOnBoard(cell.getCellNum(), cell.getDest());
-//                } else
-//                {
-//                    boardView.placeSnakeOnBoard(cell.getDest(), cell.getCellNum());
-//                }
-//            }
-//        }
+    placeSnakesOnBoard(snakeMap, boardSize);
+    placeLaddersOnBOard(ladderMap, boardSize);
 }
 
 function placeSnakesOnBoard(snakeMap, boardSize)
 {
     $.each(snakeMap, function(index, value) {
-         $(".snakesandladdersDiv").append('<img  src="images/ladderPics/ladderRight.png" class="snakeOrLadder id="'+index+'" />');
-         $("#"+index).css("left", $("#cell"+value.x).position().left +CELL_WIDTH/2).css("top",$("#cell"+value.y).position().top + CELL_WIDTH/2);
+        var topY = $("#cell" + value.x).position().top;
+        var topX = $("#cell" + value.x).position().left;
+        var bottomY = $("#cell" + value.y).position().top;
+        var bottomX = $("#cell" + value.y).position().left;
+
+        var width = Math.abs(topX - bottomX);
+        var height = Math.abs(topY - bottomY);
+        var tmp = value.y + boardSize;
+        var nearestMultOfBoardSizeToBottom = tmp - (tmp % boardSize);
+        if ((value.x % boardSize) === (value.y % boardSize))
+        { //vertical
+            $(".snakesandladdersDiv").append('<img  src="images/snakePics/snakeVertical.png" class="snakeOrLadder" id="' + index + '"/>');
+            $("#" + index).css("left", topX + CELL_WIDTH / 2).css("top", topY + CELL_WIDTH / 2).css("width", width).css("height", height);
+        } else if (value.y % boardSize === 0)
+        {           //left 
+            $(".snakesandladdersDiv").append('<img  src="images/snakePics/snakeLeft.png" class="snakeOrLadder" id="' + index + '"/>');
+            $("#" + index).css("left", topX + CELL_WIDTH / 2).css("top", topY + CELL_WIDTH / 2).css("width", width).css("height", height);
+            ;
+        } else if (value.x <= nearestMultOfBoardSizeToBottom)
+        {         //horizontal
+            $(".snakesandladdersDiv").append('<img  src="images/snakePics/snakeHorizontal.png" class="snakeOrLadder" id="' + index + '"/>');
+            $("#" + index).css("left", topX + CELL_WIDTH / 2).css("top", topY + CELL_WIDTH / 2).css("width", width).css("height", height);
+            ;
+        } else if (value.x % boardSize === 0)
+        {              //right
+            $(".snakesandladdersDiv").append('<img  src="images/snakePics/snakeRight.png" class="snakeOrLadder" id="' + index + '"/>');
+            $("#" + index).css("left", topX + CELL_WIDTH / 2).css("top", topY + CELL_WIDTH / 2).css("width", width).css("height", height);
+            ;
+        } else if ((value.x % boardSize) > (value.y % boardSize))
+        {
+            $(".snakesandladdersDiv").append('<img  src="images/snakePics/snakeRight.png" class="snakeOrLadder" id="' + index + '"/>');
+            $("#" + index).css("left", topX + CELL_WIDTH / 2).css("top", topY + CELL_WIDTH / 2).css("width", width).css("height", height);
+            ;
+        } else //((to % boardSize) < (from % boardSize))  
+        {
+            $(".snakesandladdersDiv").append('<img  src="images/snakePics/snakeLeft.png" class="snakeOrLadder" id="' + index + '"/>');
+            $("#" + index).css("left", topX + CELL_WIDTH / 2).css("top", topY + CELL_WIDTH / 2).css("width", width).css("height", height);
+            ;
+        }
+
     });
-
-
 }
 
 function ajaxJoinedPlayerList()
