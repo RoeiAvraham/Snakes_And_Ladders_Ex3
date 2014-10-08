@@ -82,8 +82,10 @@ public class Game {
 
     private boolean doesPlayerNameAlreadyExistAndJoined(String name) {
         for (Player p : playerList) {
-            if (p.getPlayerName().equals(name) && p.isJoined()) {
-                return true;
+            if (p.getPlayerName() != null)
+            {
+                if (p.getPlayerName().equals(name) && p.isJoined())
+                    return true;
             }
         }
         return false;

@@ -54,6 +54,7 @@ function bindSelectedGame() {
                     $("body").append($("<br></br>"));
                     createPlayerNameTextField(r);
                     createSubmitButton();
+                    ajaxSubmitStartButton();
                 }
             }
         });
@@ -73,14 +74,14 @@ function ajaxSubmitStartButton() {
                 console.error("Server unavailable or timeout");
             },
             success: function(r) {
-                if (r.wasGameCreated)
+                if (r == "game.html")
                 {
-                    window.location.href = r.data;
+                    window.location.href = r;
                 } else {
                     if (!$("#error").length) {
                         $("body").append($('<div id="error" class="alert alert-danger text-center center-block" role="alert">\n\
                         Player name already exists, please choose another one. </div>').hide().fadeIn("slow"));
-                    }
+                    }       
                 }
             }
         });
@@ -111,4 +112,5 @@ $(function ()
     $.ajaxSetup({cache: false});
     setInterval(ajaxGameList, refreshRate);
     bindSelectedGame();
+    
 });

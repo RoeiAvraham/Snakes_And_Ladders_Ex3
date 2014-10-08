@@ -41,21 +41,29 @@ public class ServletUtils {
     public static Player.PlayerType[] createPlayerTypesFromRequest(HttpServletRequest request, int numPlayers) {
         int numHumanPlayers = Integer.parseInt(request.getParameter(Constants.NUM_OF_HUMAN_PLAYERS));
         int numCompPlayers = numPlayers - numHumanPlayers;
-        Player.PlayerType[] res = new Player.PlayerType[numCompPlayers + 1];
+        Player.PlayerType[] res = new Player.PlayerType[numPlayers];
         res[0] = Player.PlayerType.HUMAN;
         int i;
         for (i = 1; i <= numCompPlayers; i++) {
             res[i] = Player.PlayerType.COMP;
         }
+        
+        for (int j = i; j < numPlayers; j++)
+        {
+            res[j] = Player.PlayerType.HUMAN;
+        }
         return res;
     }
 
-    public static Player.PlayerType[] createPlayerTypesFromGame(Game game) {
+    public static Player.PlayerType[] getJoinedPlayerTypes(Game game) {
         Player.PlayerType[] res = new Player.PlayerType[game.getPlayerList().size()];
         int i = 0;
         for (Player p : game.getPlayerList()) {
-            res[i] = p.getType();
-            i++;
+            if (p.isJoined())
+            {
+                res[i] = p.getType();
+                i++;
+            }
         }
 
         return res;
@@ -74,13 +82,14 @@ public class ServletUtils {
         return names;
     }
 
-    public static ArrayList<String> createPlayerNamesFromGame(Game game) {
+    public static ArrayList<String> getJoinedPlayerNames(Game game) {
         ArrayList<String> names = new ArrayList<>();
 
         int i = 0;
 
         for (Player p : game.getPlayerList()) {
-            names.add(p.getPlayerName());
+            if (p.isJoined())
+                names.add(p.getPlayerName());
         }
         return names;
     }

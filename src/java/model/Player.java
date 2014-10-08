@@ -81,6 +81,7 @@ public abstract class Player {
                 m_soldiersPos[i] = EMPTY;
             }
         }
+        m_playerName = null;
         isJoined = false;
     }
 

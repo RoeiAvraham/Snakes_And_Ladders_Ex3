@@ -9,8 +9,6 @@ import com.google.gson.Gson;
 import exception.DuplicatePlayerNamesException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -45,23 +43,30 @@ public class StartGameServlet extends HttpServlet {
         String gameNameFromSession = SessionUtils.getGameName(request);
         GameManager gameManager = ServletUtils.getGameManager(getServletContext());
         if (gameNameFromSession == null) {
-            String gameNameFromParameter = request.getParameter(Constants.GAME_NAME).trim();
-            request.getSession(true).setAttribute(Constants.GAME_NAME, gameNameFromParameter);
-            String playerNameFromParameter = request.getParameter(Constants.PLAYER_NAME).trim();
-            request.getSession().setAttribute(Constants.PLAYER_NAME, playerNameFromParameter);
-
-            if (gameManager.getGames().get(gameNameFromParameter) == null) {
-                gameManager.addGame(gameNameFromParameter, ServletUtils.getXmlGameFromServletContext(getServletContext()));
-            }
-
-            Game currGame = gameManager.getGames().get(gameNameFromParameter);
+            
             try {
+                String gameNameFromParameter = request.getParameter(Constants.GAME_NAME).trim();
+                String playerNameFromParameter = request.getParameter(Constants.PLAYER_NAME).trim();
+                Game currGame = gameManager.getGames().get(gameNameFromParameter);
                 currGame.joinPlayer(playerNameFromParameter);
+              
+                request.getSession(true).setAttribute(Constants.GAME_NAME, gameNameFromParameter);
+                request.getSession().setAttribute(Constants.PLAYER_NAME, playerNameFromParameter);
+                
+                //check if request came from xml creation:
+                if (gameManager.getGames().get(gameNameFromParameter) == null) {
+                    gameManager.addGame(gameNameFromParameter, ServletUtils.getXmlGameFromServletContext(getServletContext()));
+                }
+                
+                sendDataToClient(response, Constants.GAME_HTML);
             } catch (DuplicatePlayerNamesException ex) {
                 sendDataToClient(response, Constants.PLAYER_EXISTS);
             }
         }
-       sendDataToClient(response, Constants.GAME_HTML);
+        else
+        {
+           sendDataToClient(response, Constants.GAME_HTML);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
