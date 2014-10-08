@@ -57,6 +57,4 @@ function createPlayerNameTextField(r)
     $("#divFormGroup").append(divField);
     $("#playerNameForm").append($("#divFormGroup"));
     $("#playerNameForm").append(hiddenGameNameField);
-    
-//    $("body").append($("#playerNameForm"));
 }

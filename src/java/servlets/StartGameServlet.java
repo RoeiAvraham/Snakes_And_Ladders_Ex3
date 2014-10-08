@@ -5,8 +5,10 @@
  */
 package servlets;
 
+import com.google.gson.Gson;
 import exception.DuplicatePlayerNamesException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -38,29 +40,28 @@ public class StartGameServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        
+        response.setContentType("application/json");
+
         String gameNameFromSession = SessionUtils.getGameName(request);
         GameManager gameManager = ServletUtils.getGameManager(getServletContext());
-        if (gameNameFromSession == null)
-        {
-             String gameNameFromParameter = request.getParameter(Constants.GAME_NAME).trim();
-             request.getSession(true).setAttribute(Constants.GAME_NAME, gameNameFromParameter);
-             String playerNameFromParameter = request.getParameter(Constants.PLAYER_NAME).trim();
-             request.getSession().setAttribute(Constants.PLAYER_NAME, playerNameFromParameter);
-             
-             if (gameManager.getGames().get(gameNameFromParameter) == null) {
-                 gameManager.addGame(gameNameFromParameter, ServletUtils.getXmlGameFromServletContext(getServletContext()));
-             }
-             
-             Game currGame = gameManager.getGames().get(gameNameFromParameter);
+        if (gameNameFromSession == null) {
+            String gameNameFromParameter = request.getParameter(Constants.GAME_NAME).trim();
+            request.getSession(true).setAttribute(Constants.GAME_NAME, gameNameFromParameter);
+            String playerNameFromParameter = request.getParameter(Constants.PLAYER_NAME).trim();
+            request.getSession().setAttribute(Constants.PLAYER_NAME, playerNameFromParameter);
+
+            if (gameManager.getGames().get(gameNameFromParameter) == null) {
+                gameManager.addGame(gameNameFromParameter, ServletUtils.getXmlGameFromServletContext(getServletContext()));
+            }
+
+            Game currGame = gameManager.getGames().get(gameNameFromParameter);
             try {
                 currGame.joinPlayer(playerNameFromParameter);
             } catch (DuplicatePlayerNamesException ex) {
-                Logger.getLogger(StartGameServlet.class.getName()).log(Level.SEVERE, null, ex);
+                sendDataToClient(response, Constants.PLAYER_EXISTS);
             }
         }
-        response.sendRedirect(Constants.GAME_HTML);
+       sendDataToClient(response, Constants.GAME_HTML);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -101,5 +102,16 @@ public class StartGameServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+    
+        private void sendDataToClient(HttpServletResponse response, String data) throws IOException {
+
+        try (PrintWriter out = response.getWriter()) 
+        {   
+            Gson gson = new Gson();
+            String jsonResponse = gson.toJson(data);
+            out.print(jsonResponse);
+            out.flush();
+        }
+    }
 
 }

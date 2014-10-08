@@ -7,6 +7,7 @@ package servlets;
 
 import com.google.gson.Gson;
 import exception.DuplicateGameNameException;
+import exception.DuplicatePlayerNamesException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -56,8 +57,9 @@ public class CreateNewGameServlet extends HttpServlet {
                 request.getSession(true).setAttribute(Constants.GAME_NAME, gameNameFromParameter);
                 String playerNameFromParameter = request.getParameter(Constants.PLAYER_NAME).trim();
                 request.getSession().setAttribute(Constants.PLAYER_NAME, playerNameFromParameter);
+                game.joinPlayer(playerNameFromParameter);
                 sendDataToClient(response, true, gameNameFromParameter);
-            } catch (DuplicateGameNameException ex) {
+            } catch (DuplicateGameNameException | DuplicatePlayerNamesException ex) {
                 sendDataToClient(response, false, gameNameFromParameter);
             }
         } else {

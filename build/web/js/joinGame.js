@@ -19,7 +19,7 @@ function refreshGamesList(fullGames) {
     var selected_item = $("#gameslist").val();
 
     $("#gameslist").empty();
-    $.each(fullGames /*|| []*/, function (index, game) {
+    $.each(fullGames, function (index, game) {
         if (!(game)) // Game is available to join
         {
             $('<option>' + index + '</option>').appendTo($("#gameslist"));
@@ -60,6 +60,50 @@ function bindSelectedGame() {
 
     });
     return false;
+}
+
+function ajaxSubmitStartButton() {
+    //add a function to the submit event
+    $("#playerNameForm").submit(function() {
+        jQuery.ajax({
+            data: $(this).serialize(),
+            url: this.action,
+            timeout: 2000,
+            error: function() {
+                console.error("Server unavailable or timeout");
+            },
+            success: function(r) {
+                if (r.wasGameCreated)
+                {
+                    window.location.href = r.data;
+                } else {
+                    if (!$("#error").length) {
+                        $("body").append($('<div id="error" class="alert alert-danger text-center center-block" role="alert">\n\
+                        Player name already exists, please choose another one. </div>').hide().fadeIn("slow"));
+                    }
+                }
+            }
+        });
+        return false;
+    });
+}
+
+function validate()
+{
+    if ($('#gameName').val().length > 0)
+    {
+        $("#startBtn").prop("disabled", false);
+    }
+    else {
+        $("#startBtn").prop("disabled", true);
+    }
+
+    if ($("#error").length)
+    {
+        $('#error').fadeOut("slow",function() {
+            $(this).remove();
+        });
+    }
 }
 
 $(function () 

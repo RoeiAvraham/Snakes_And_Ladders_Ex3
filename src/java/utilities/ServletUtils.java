@@ -114,10 +114,4 @@ public class ServletUtils {
             }
         }
     }
-    
-    public static void joinInitialPlayersToGame(String playerName, Game game) throws DuplicatePlayerNamesException
-    {
-        game.joinPlayer(playerName);
-        
-    }
 }

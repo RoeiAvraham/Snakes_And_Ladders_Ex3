@@ -28,6 +28,7 @@ public class Game {
     private Player winner = null;
     private LoadedFrom gameSrc;
     boolean isStarted = false;
+    int joinedCount;
 
     public Game(Snakesandladders gameXml) throws XmlIsInvalidException {
         gameName = gameXml.getName();
@@ -37,6 +38,7 @@ public class Game {
         playerList = new LinkedList<Player>();
         gameSrc = LoadedFrom.XML;
         m_board = new GameBoard(gameXml);
+        joinedCount = 0;
 
         int i = 0;
 
@@ -52,6 +54,7 @@ public class Game {
                 playerList.add(new HumanPlayer(++i, m_board, gameSrc));
             } else if (p.getType() == COMPUTER) {
                 playerList.add(new CompPlayer(++i, p.getName(), m_board, gameSrc));
+                joinedCount++;
             }
             playerList.getLast().setPlayerName(playerNames.get(i - 1));
         }
@@ -74,6 +77,7 @@ public class Game {
             newPlayer = getPlayerByName(playerName);
         }
         newPlayer.setIsJoined(true);
+        joinedCount++;
     }
 
     private boolean doesPlayerNameAlreadyExistAndJoined(String name) {
@@ -117,6 +121,7 @@ public class Game {
         for (i = 0; i < m_numPlayers; i++) {
             if (playerTypes[i] == Player.PlayerType.COMP) {
                 playerList.add(new CompPlayer(i + 1, "Comp" + ++compInd, m_board, gameSrc));
+                joinedCount++;
             } else {
                 playerList.add(new HumanPlayer(i + 1, m_board, gameSrc));
             }
@@ -294,7 +299,7 @@ public class Game {
     }
 
     public boolean isGameStarted() {
-        isStarted = playerList.size() == getM_numPlayers();
+        isStarted = joinedCount == getM_numPlayers();
         return isStarted;
     }
 
