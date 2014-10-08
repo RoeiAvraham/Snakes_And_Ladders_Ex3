@@ -19,14 +19,14 @@ function refreshGamesList(fullGames) {
     var selected_item = $("#gameslist").val();
 
     $("#gameslist").empty();
-    $.each(Object.keys(fullGames) || [], function (index, game) {
-        if (!(fullGames.game)) // Game is available to join
+    $.each(fullGames /*|| []*/, function (index, game) {
+        if (!(game)) // Game is available to join
         {
-            $('<option>' + game + '</option>').appendTo($("#gameslist"));
+            $('<option>' + index + '</option>').appendTo($("#gameslist"));
         }
         else
         {
-            $('<option>' + game + '    -   Full game</option>').appendTo($("#gameslist"));
+            $('<option>' + index + '    -   Full game</option>').attr('disabled','disabled').appendTo($("#gameslist"));
         }
     });
     $("#gameslist").val(selected_item);

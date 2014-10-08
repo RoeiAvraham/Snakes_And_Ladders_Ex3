@@ -83,11 +83,11 @@ public class Game {
         this.gameName = gameName;
         m_board = new GameBoard(boardSize, numOfLadders, numPlayers);
         m_numSoldiersToWin = numSoldiersToWin;
-        m_numPlayers = playerNames.size();
+        m_numPlayers = numPlayers;
         playerList = new LinkedList<>();
         gameSrc = LoadedFrom.REG;
         int i;
-        for (i = 0; i < m_numPlayers; i++) {
+        for (i = 0; i < playerTypes.length; i++) {
             if (playerTypes[i] == Player.PlayerType.COMP) {
                 playerList.add(new CompPlayer(i + 1, playerNames.get(i), m_board, gameSrc));
             } else {
@@ -268,9 +268,7 @@ public class Game {
     }
 
     public boolean isGameStarted() {
-        if (playerList.size() == getM_numPlayers()) {
-            isStarted = true;
-        }
+        isStarted = playerList.size() == getM_numPlayers();
         return isStarted;
     }
 

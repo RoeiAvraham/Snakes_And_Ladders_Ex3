@@ -38,9 +38,9 @@ public class ServletUtils {
     }
 
     public static Player.PlayerType[] createPlayerTypesFromRequest(HttpServletRequest request, int numPlayers) {
-        Player.PlayerType[] res = new Player.PlayerType[numPlayers];
         int numHumanPlayers = Integer.parseInt(request.getParameter(Constants.NUM_OF_HUMAN_PLAYERS));
         int numCompPlayers = numPlayers - numHumanPlayers;
+        Player.PlayerType[] res = new Player.PlayerType[numCompPlayers + 1];
         res[0] = Player.PlayerType.HUMAN;
         int i;
         for (i = 1; i <= numCompPlayers; i++) {
