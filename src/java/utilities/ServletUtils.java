@@ -1,5 +1,6 @@
 package utilities;
 
+import exception.DuplicatePlayerNamesException;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -104,7 +105,6 @@ public class ServletUtils {
         for (Cell cell : game.getBoard().getCells()) {
             if (cell.getDest() != Cell.NO_DEST) {
                 if (cell.getCellNum() < cell.getDest()) {
-                //    ladderMap.put("ladder" + ladderCounter, new Point(cell.getCellNum(),cell.getDest()));
                     ladderMap.put("ladder" + ladderCounter, ggis. new SnakeOrLadder(cell.getCellNum(), cell.getDest()));
                     ladderCounter++;
                 } else {
@@ -115,5 +115,9 @@ public class ServletUtils {
         }
     }
     
-    
+    public static void joinInitialPlayersToGame(String playerName, Game game) throws DuplicatePlayerNamesException
+    {
+        game.joinPlayer(playerName);
+        
+    }
 }
