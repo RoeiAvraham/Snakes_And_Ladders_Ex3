@@ -38,6 +38,7 @@ public class Game {
         playerList = new LinkedList<Player>();
         gameSrc = LoadedFrom.XML;
         m_board = new GameBoard(gameXml);
+        joinedCount = 0;
         int i = 0;
 
         checkIfXmlGameAlreadyFinished(m_numSoldiersToWin, gameXml.getBoard().getCells().getCell(), gameXml.getBoard().getSize());

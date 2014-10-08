@@ -43,7 +43,6 @@ public class StartGameServlet extends HttpServlet {
         String gameNameFromSession = SessionUtils.getGameName(request);
         GameManager gameManager = ServletUtils.getGameManager(getServletContext());
         if (gameNameFromSession == null) {
-            
             try {
                 String gameNameFromParameter = request.getParameter(Constants.GAME_NAME).trim();
                 String playerNameFromParameter = request.getParameter(Constants.PLAYER_NAME).trim();

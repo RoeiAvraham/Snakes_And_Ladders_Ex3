@@ -70,7 +70,8 @@ function bindSelectedGame() {
 
 function ajaxSubmitStartButton() {
     //add a function to the submit event
-    $("#playerNameForm").submit(function () {
+
+    $("#playerNameForm").submit(function() {
         jQuery.ajax({
             data: $(this).serialize(),
             url: this.action,
