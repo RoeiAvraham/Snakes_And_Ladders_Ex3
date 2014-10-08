@@ -102,7 +102,6 @@ function placeSnakesOnBoard(snakeMap, boardSize)
         {
             $(".snakesandladdersDiv").append('<img  src="images/snakePics/snakeLeft.png" class="snakeOrLadder" id="' + index + '"/>');
             $("#" + index).css("left", topX + CELL_WIDTH / 2).css("top", topY + CELL_WIDTH / 2).css("width", width).css("height", height);
-
         }
     });
 }
@@ -160,71 +159,84 @@ function ajaxJoinedPlayerList()
 }
 
 
+
 $(function()
 {
     $.ajaxSetup({cache: false});
     setInterval(ajaxJoinedPlayerList, refreshRate);
     getGameInfo();
-    
-    var isRunning = false;
-    $('.dice').click( function() {
-           if (isRunning)
-               return;
-           isRunning = true;
-           $(this).css('background-image','url(\'images/dicePics/rolling_dice.gif\')');
-           $(this).css('cursor','arrow');
-           var that = this;
-           setTimeout( function() {
-               $(that).css('background-image','url(\'images/dicePics/die1.png\')');
-               isRunning = false;
-               //$('[data-owner="nadav"]').blink();
-           }, 2000);
-           return false;
+    setDiceAction();
+});
+
+function setDiceAction() {
+    $('.dice').click(function() {
+        var audio = document.getElementById("diceSound");
+        audio.play();
+        getDiceResFromServer();
+        $(this).off();
+        $(this).css('background-image', 'url(\'images/dicePics/rolling_dice.gif\')');
+        $(this).css('cursor', 'arrow');
+        return false;
     });
-
-});
-\*
-$('.soldier').click( function() {
-    
-    if (!$(this).attr('data-owner') == currentPlayerId)
-        return;
-            .
-            
-            .
-            .
-            
-});
-*\
-
-function Soldier() {
-    var myPrivateVar, myPrivateMethod;
-    // A private counter variable
-    myPrivateVar = 0;
-    // A private function which logs any arguments
-    myPrivateMethod = function( foo ) {
-        console.log( foo );
-    };
-    
-    return {
-        // A public variable
-        myPublicVar: "foo",
-        // A public function utilizing privates
-        myPublicFunction: function( bar ) {
-        // Increment our private counter
-        myPrivateVar++;
-        // Call our private method using bar
-        myPrivateMethod( bar );
-    }
-  };
- 
 }
 
-x= new Soldier;
-x.myPublicFunction();
-
-function Soldier() {
-    this. 
-    this.owner;
+function getDiceResFromServer()
+{
+    $.ajax({
+        url: "diceRes",
+        type: "GET",
+        contentType: "application/json",
+        dataType: "json",
+        timeout: 2000,
+        success: function(r) {
+            setTimeout(function() {
+                $(".dice").css('background-image', 'url(\'images/dicePics/die' + r + '.png\')');
+                setDiceAction();
+                //$('[data-owner="nadav"]').blink();
+            }, 1000);
+        }
+    });
+    return false;
 }
-var z = new MyClass();
-console.log(z.y);
+
+
+//$('.soldier').click( function() {
+//    
+//    if (!$(this).attr('data-owner') == currentPlayerId)
+//        return;
+//
+//});
+
+
+//function Soldier() {
+//    var myPrivateVar, myPrivateMethod;
+//    // A private counter variable
+//    myPrivateVar = 0;
+//    // A private function which logs any arguments
+//    myPrivateMethod = function( foo ) {
+//        console.log( foo );
+//    };
+//    
+//    return {
+//        // A public variable
+//        myPublicVar: "foo",
+//        // A public function utilizing privates
+//        myPublicFunction: function( bar ) {
+//        // Increment our private counter
+//        myPrivateVar++;
+//        // Call our private method using bar
+//        myPrivateMethod( bar );
+//    }
+//  };
+
+
+
+//x= new Soldier;
+//x.myPublicFunction();
+
+//function Soldier() {
+//    this. 
+//    this.owner;
+//}
+//var z = new MyClass();
+//console.log(z.y);

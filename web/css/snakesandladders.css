@@ -60,7 +60,6 @@ a
 .dice
 {
     position: absolute;
-    width:130px;
     top:300px;
     right: -300px;
     background-image: url('../images/dicePics/staticDic.png');
