@@ -22,11 +22,9 @@ and open the template in the editor.
 }
 .snakesandladdersDiv
 {
-  position:absolute;
-  width: 442px;
-  height: 442px;
-  top: 0;
-  text-align: left;
+    position:absolute;
+    top: 0;
+    text-align: left;
 }
 /*.tableDiv{
     position: absolute;
@@ -55,12 +53,22 @@ a
 .boardMainDiv
 {
     position:relative;
-    width: 442px;
-    height: 442px;
     margin:auto;
-
+    text-align:left;
 }
 
+.dice
+{
+    position: absolute;
+    width:130px;
+    top:300px;
+    right: -300px;
+    background-image: url('../images/dicePics/staticDic.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 114px;
+    height: 121px;
+}
 td
 {
     width: 80px;
@@ -83,7 +91,7 @@ td
     width: 200px;
     height:  200px !important;
     background: linear-gradient(white,lightgrey);
-//    border-radius: 15px;
+    //    border-radius: 15px;
 }
 
 /*input {

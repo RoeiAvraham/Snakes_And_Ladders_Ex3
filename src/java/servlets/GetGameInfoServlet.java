@@ -48,9 +48,9 @@ public class GetGameInfoServlet extends HttpServlet {
             currGame.getNumSoldiersToWin(), currGame.getPlayerList().size(),
             ServletUtils.createPlayerNamesFromGame(currGame), ServletUtils.createPlayerTypesFromGame(currGame));
             
-            HashMap<String, Point> ladderMap = new HashMap<>();
-            HashMap<String, Point> snakeMap = new HashMap<>();
-            ServletUtils.buildLocationMapOfLadders(currGame, ladderMap, snakeMap);
+            HashMap<String, SnakeOrLadder> ladderMap = new HashMap<>();
+            HashMap<String, SnakeOrLadder> snakeMap = new HashMap<>();
+            ServletUtils.buildLocationMapOfLadders(this,currGame, ladderMap, snakeMap);
             gd.setSnakeAndLadderMaps(ladderMap, snakeMap);
             
             Gson gson = new Gson();
@@ -60,6 +60,17 @@ public class GetGameInfoServlet extends HttpServlet {
 
             out.print(jsonResponse);
             out.flush();
+        }
+    }
+    public class SnakeOrLadder
+    {
+        int from;
+        int to;
+        
+        public SnakeOrLadder(int from, int to)
+        {
+            this.from = from;
+            this.to = to;
         }
     }
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

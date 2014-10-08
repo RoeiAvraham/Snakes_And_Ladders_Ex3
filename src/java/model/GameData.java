@@ -8,6 +8,7 @@ package model;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
+import servlets.GetGameInfoServlet.SnakeOrLadder;
 
 /**
  *
@@ -21,8 +22,8 @@ public class GameData
     private int numPlayers;
     private ArrayList<String> playerNames;
     private Player.PlayerType[] playerTypes;
-    private HashMap<String, Point> ladderMap;
-    private HashMap<String, Point> snakeMap;
+    private HashMap<String, SnakeOrLadder> ladderMap;
+    private HashMap<String, SnakeOrLadder> snakeMap;
 
     public GameData(int boardSize, int numOfLadders, int numSoldiersToWin, int numPlayers, 
                     ArrayList<String> playerNames, Player.PlayerType[] playerTypes)
@@ -131,7 +132,7 @@ public class GameData
         this.playerTypes = playerTypes;
     }
     
-    public void setSnakeAndLadderMaps(HashMap<String, Point> ladderMap, HashMap<String, Point> snakeMap)
+    public void setSnakeAndLadderMaps(HashMap<String, SnakeOrLadder> ladderMap, HashMap<String, SnakeOrLadder> snakeMap)
     {
         this.ladderMap = ladderMap;
         this.snakeMap = snakeMap;
