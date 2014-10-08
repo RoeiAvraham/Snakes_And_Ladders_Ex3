@@ -57,7 +57,6 @@ public class StartGameServlet extends HttpServlet {
                 gameManager.addGame(gameNameFromParameter, currGame);
                 request.getSession(true).setAttribute(Constants.GAME_NAME, gameNameFromParameter);
                 request.getSession().setAttribute(Constants.PLAYER_NAME, playerNameFromParameter);
-                                
                 sendDataToClient(response, Constants.GAME_HTML);
             } catch (DuplicatePlayerNamesException ex) {
                 sendDataToClient(response, Constants.PLAYER_EXISTS);
