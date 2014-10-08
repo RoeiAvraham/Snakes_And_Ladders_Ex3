@@ -50,13 +50,20 @@ function bindSelectedGame() {
 
                 if (r.isXmlGameAndIsReady) // Game selected is a XML Game.
                 {
+
                     createDropDownPlayerName(r);
+                    createSubmitButton();
+                    ajaxSubmitStartButton();
+                    $("#playerNameForm").prepend("<br/>");
+                    $('#playerName').keyup(validate);
                 }
                 else // Game selected is a regular game.
                 {
                     createPlayerNameTextField(r);
                     createSubmitButton();
                     ajaxSubmitStartButton();
+                     $("#playerNameForm").prepend("<br/>");
+                    $('#playerName').keyup(validate);
                 }
                 createSubmitButton();
                 ajaxSubmitStartButton();
