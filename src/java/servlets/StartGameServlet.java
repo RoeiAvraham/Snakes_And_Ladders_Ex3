@@ -48,16 +48,17 @@ public class StartGameServlet extends HttpServlet {
                 String gameNameFromParameter = request.getParameter(Constants.GAME_NAME).trim();
                 String playerNameFromParameter = request.getParameter(Constants.PLAYER_NAME).trim();
                 Game currGame = gameManager.getGames().get(gameNameFromParameter);
-                currGame.joinPlayer(playerNameFromParameter);
-              
-                request.getSession(true).setAttribute(Constants.GAME_NAME, gameNameFromParameter);
-                request.getSession().setAttribute(Constants.PLAYER_NAME, playerNameFromParameter);
                 
                 //check if request came from xml creation:
-                if (gameManager.getGames().get(gameNameFromParameter) == null) {
-                    gameManager.addGame(gameNameFromParameter, ServletUtils.getXmlGameFromServletContext(getServletContext()));
+                if (currGame == null) {
+                    currGame = ServletUtils.getXmlGameFromServletContext(getServletContext());
                 }
-                
+                currGame.joinPlayer(playerNameFromParameter);
+              
+                gameManager.addGame(gameNameFromParameter, currGame);
+                request.getSession(true).setAttribute(Constants.GAME_NAME, gameNameFromParameter);
+                request.getSession().setAttribute(Constants.PLAYER_NAME, playerNameFromParameter);
+                                
                 sendDataToClient(response, Constants.GAME_HTML);
             } catch (DuplicatePlayerNamesException ex) {
                 sendDataToClient(response, Constants.PLAYER_EXISTS);

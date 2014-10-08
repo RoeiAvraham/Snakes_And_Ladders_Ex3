@@ -94,13 +94,11 @@ public class ServletUtils {
         return names;
     }
 
-    public static ArrayList<String> createHumanPlayerNamesList(Game game) {
+    public static ArrayList<String> getHumanFreeNamesList(Game game) {
         ArrayList<String> names = new ArrayList<>();
 
-        int i = 0;
-
         for (Player p : game.getPlayerList()) {
-            if (p.getType() == PlayerType.HUMAN) {
+            if (p.getType() == PlayerType.HUMAN && !p.isJoined()) {
                 names.add(p.getPlayerName());
             }
         }

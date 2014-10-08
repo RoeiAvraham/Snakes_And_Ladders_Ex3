@@ -22,11 +22,11 @@ function refreshGamesList(fullGames) {
     $.each(fullGames, function (index, game) {
         if (!(game)) // Game is available to join
         {
-            $('<option>' + index + '</option>').appendTo($("#gameslist"));
+            $('<option class="green" title="Double Click to choose the game.">' + index + '</option>').appendTo($("#gameslist"));
         }
         else
         {
-            $('<option>' + index + '    -   Full game</option>').attr('disabled','disabled').appendTo($("#gameslist"));
+            $('<option class="red" title="Game is Full">' + index + '    -  Full game</option>').attr('disabled','disabled').appendTo($("#gameslist"));
         }
     });
     $("#gameslist").val(selected_item);
@@ -43,18 +43,27 @@ function bindSelectedGame() {
                 console.error("Server unavailable or timeout");
             },
             success: function (r) {
+                if ($("#playerNameForm").length>0){
+                    $("#playerNameForm").remove();
+                    $("#form2Div").remove();
+                }
+
                 if (r.isXmlGameAndIsReady) // Game selected is a XML Game.
                 {
-                    $("body").append($("<br></br>"));
+                    
                     createDropDownPlayerName(r);
                     createSubmitButton();
+                    ajaxSubmitStartButton();
+                    $("#playerNameForm").prepend("<br/>");
+                    $('#playerName').keyup(validate);
                 }
                 else // Game selected is a regular game.
                 {
-                    $("body").append($("<br></br>"));
                     createPlayerNameTextField(r);
                     createSubmitButton();
                     ajaxSubmitStartButton();
+                     $("#playerNameForm").prepend("<br/>");
+                    $('#playerName').keyup(validate);
                 }
             }
         });
@@ -91,7 +100,7 @@ function ajaxSubmitStartButton() {
 
 function validate()
 {
-    if ($('#gameName').val().length > 0)
+    if ($('#playerName').val().length > 0)
     {
         $("#startBtn").prop("disabled", false);
     }

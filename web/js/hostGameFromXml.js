@@ -52,6 +52,7 @@ function setUploadListener()
                     $("#upload").attr("disabled", "disabled");
                     $("#file").attr("disabled", "disabled");
                     validate();
+                    ajaxSubmitStartButton();
                 }
                 else
                 {
@@ -66,6 +67,24 @@ function setUploadListener()
         );
     });
     return false;
+}
+
+function ajaxSubmitStartButton() {
+    //add a function to the submit event
+    $("#playerNameForm").submit(function() {
+        jQuery.ajax({
+            data: $(this).serialize(),
+            url: this.action,
+            timeout: 2000,
+            error: function() {
+                console.error("Server unavailable or timeout");
+            },
+            success: function(r) {
+                window.location.href = r;
+            }
+        });
+        return false;
+    });
 }
 
 function displayErrorMessage(isErrorPresent, data)

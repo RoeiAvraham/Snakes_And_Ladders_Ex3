@@ -16,7 +16,7 @@ function createDropDownPlayerName(r)
 {
     createPlayerNameForm();
     var label = $("<label></label>").attr("class", "col-sm-5 control-label");
-    var divCombo = $("<div></div>").attr("class", "col-sm-2");
+    var divCombo = $("<div></div>").attr("class", "col-sm-2").attr("id","choosePlayer");
     var combo = $("<select></select>").attr("id", "playerName").attr("name", "playerName").attr("class", "form-control");
     var hiddenGameNameField = '<input type="hidden" id="gameName" name="gameName" value="'+ r.gameName + '"/>';
 
@@ -35,7 +35,7 @@ function createDropDownPlayerName(r)
 
 function createSubmitButton()
 {
-    var divFormGroup = $("<div></div>").attr("class", "form-group text-center");
+    var divFormGroup = $("<div></div>").attr("class", "form-group text-center").attr("id", "form2Div");
     var startButton = $("<button></button>").attr("id", "startBtn").attr("type", "submit").attr("class", "btn btn-warning btn-lg custom center-block");
 
     startButton.append("Start Game");
