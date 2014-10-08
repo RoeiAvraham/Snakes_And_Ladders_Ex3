@@ -12,15 +12,10 @@ import java.util.Random;
  */
 public class CompPlayer extends Player {
 
-<<<<<<< HEAD
-    public CompPlayer(int playerNum, GameBoard board, LoadedFrom source) {
-        super(playerNum, board, source);
-=======
     public CompPlayer(int playerNum, String playerName, GameBoard board, LoadedFrom source) {
         super(playerNum, board, source);
         setPlayerName(playerName);
         setIsJoined(true);
->>>>>>> JoinGameRewrite
     }
 
     @Override

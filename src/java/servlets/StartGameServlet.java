@@ -5,17 +5,10 @@
  */
 package servlets;
 
-<<<<<<< HEAD
-import exception.DuplicatePlayerNamesException;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-=======
 import com.google.gson.Gson;
 import exception.DuplicatePlayerNamesException;
 import java.io.IOException;
 import java.io.PrintWriter;
->>>>>>> JoinGameRewrite
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -73,25 +66,7 @@ public class StartGameServlet extends HttpServlet {
         }
         else
         {
-<<<<<<< HEAD
-             String gameNameFromParameter = request.getParameter(Constants.GAME_NAME).trim();
-             request.getSession(true).setAttribute(Constants.GAME_NAME, gameNameFromParameter);
-             String playerNameFromParameter = request.getParameter(Constants.PLAYER_NAME).trim();
-             request.getSession().setAttribute(Constants.PLAYER_NAME, playerNameFromParameter);
-             
-             if (gameManager.getGames().get(gameNameFromParameter) == null) {
-                 gameManager.addGame(gameNameFromParameter, ServletUtils.getXmlGameFromServletContext(getServletContext()));
-             }
-             
-             Game currGame = gameManager.getGames().get(gameNameFromParameter);
-            try {
-                currGame.joinPlayer(playerNameFromParameter);
-            } catch (DuplicatePlayerNamesException ex) {
-                Logger.getLogger(StartGameServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-=======
            sendDataToClient(response, Constants.GAME_HTML);
->>>>>>> JoinGameRewrite
         }
     }
 

@@ -38,12 +38,8 @@ public class Game {
         playerList = new LinkedList<Player>();
         gameSrc = LoadedFrom.XML;
         m_board = new GameBoard(gameXml);
-<<<<<<< HEAD
-        
-=======
         joinedCount = 0;
 
->>>>>>> JoinGameRewrite
         int i = 0;
         
         checkIfXmlGameAlreadyFinished(m_numSoldiersToWin, gameXml.getBoard().getCells().getCell(), gameXml.getBoard().getSize());
@@ -57,12 +53,8 @@ public class Game {
             if (p.getType() == HUMAN) {
                 playerList.add(new HumanPlayer(++i, m_board, gameSrc));
             } else if (p.getType() == COMPUTER) {
-<<<<<<< HEAD
-                playerList.add(new CompPlayer(++i, m_board, gameSrc));
-=======
                 playerList.add(new CompPlayer(++i, p.getName(), m_board, gameSrc));
                 joinedCount++;
->>>>>>> JoinGameRewrite
             }
             playerList.getLast().setPlayerName(playerNames.get(i - 1));
         }
@@ -72,26 +64,6 @@ public class Game {
     }
 
     public void joinPlayer(String playerName) throws DuplicatePlayerNamesException {
-<<<<<<< HEAD
-        if (doesPlayerNameAlreadyExist(playerName)) {
-            throw new DuplicatePlayerNamesException();
-        }
-        
-        Player newPlayer;
-                
-        if (gameSrc == LoadedFrom.REG)
-        {
-            newPlayer = getNextPlayerInListStillNotJoined();
-            newPlayer.setIsJoined(true);
-            newPlayer.setPlayerName(playerName);
-        }
-        else
-        {
-            newPlayer = getPlayerByName(playerName);
-            newPlayer.setIsJoined(true);
-        }        
-        
-=======
         if (doesPlayerNameAlreadyExistAndJoined(playerName)) {
             throw new DuplicatePlayerNamesException();
         }
@@ -106,7 +78,6 @@ public class Game {
         }
         newPlayer.setIsJoined(true);
         joinedCount++;
->>>>>>> JoinGameRewrite
     }
 
     private boolean doesPlayerNameAlreadyExistAndJoined(String name) {
@@ -119,51 +90,27 @@ public class Game {
         }
         return false;
     }
-<<<<<<< HEAD
-    
-    private Player getNextPlayerInListStillNotJoined()
-    {
-        for (Player p : playerList)
-        {
-            if (!p.isJoined())
-            {
-=======
 
     public Player getNextPlayerInListStillNotJoined() {
         for (Player p : playerList) {
             if (!p.isJoined()) {
->>>>>>> JoinGameRewrite
                 return p;
             }
         }
         return null;
     }
-<<<<<<< HEAD
     
-    private Player getPlayerByName(String playerName)
-    {
-        for (Player p : playerList)
-        {
-            if (p.getPlayerName().equals(playerName))
-            {
-=======
 
     public Player getPlayerByName(String playerName) {
         for (Player p : playerList) {
             if (p.getPlayerName().equals(playerName)) {
->>>>>>> JoinGameRewrite
                 return p;
             }
         }
         return null;
     }
-<<<<<<< HEAD
-    
-    public Game(int boardSize, int numOfLadders, int numSoldiersToWin, int numPlayers, Player.PlayerType[] playerTypes , String gameName) {
-=======
 
     public Game(int boardSize, int numOfLadders, int numSoldiersToWin, int numPlayers, Player.PlayerType[] playerTypes, String gameName) {
->>>>>>> JoinGameRewrite
 
         this.gameName = gameName;
         m_board = new GameBoard(boardSize, numOfLadders, numPlayers);
@@ -171,13 +118,6 @@ public class Game {
         m_numPlayers = numPlayers;
         playerList = new LinkedList<>();
         gameSrc = LoadedFrom.REG;
-<<<<<<< HEAD
-        
-        int i;
-        for (i = 0; i < m_numPlayers; i++) {
-            if (playerTypes[i] == Player.PlayerType.COMP) {
-                playerList.add(new CompPlayer(i + 1, m_board, gameSrc));
-=======
 
         int i;
         int compInd = 0;
@@ -185,7 +125,6 @@ public class Game {
             if (playerTypes[i] == Player.PlayerType.COMP) {
                 playerList.add(new CompPlayer(i + 1, "Comp" + ++compInd, m_board, gameSrc));
                 joinedCount++;
->>>>>>> JoinGameRewrite
             } else {
                 playerList.add(new HumanPlayer(i + 1, m_board, gameSrc));
             }
