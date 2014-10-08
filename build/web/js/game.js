@@ -183,18 +183,18 @@ $(function()
     });
 
 });
-\*
-$('.soldier').click( function() {
-    
-    if (!$(this).attr('data-owner') == currentPlayerId)
-        return;
-            .
-            
-            .
-            .
-            
-});
-*\
+//\*
+//$('.soldier').click( function() {
+//    
+//    if (!$(this).attr('data-owner') == currentPlayerId)
+//        return;
+//            .
+//            
+//            .
+//            .
+//            
+//});
+//*\
 
 function Soldier() {
     var myPrivateVar, myPrivateMethod;

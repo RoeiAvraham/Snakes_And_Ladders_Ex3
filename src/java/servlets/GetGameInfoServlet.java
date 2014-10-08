@@ -45,8 +45,7 @@ public class GetGameInfoServlet extends HttpServlet {
             GameManager gm = ServletUtils.getGameManager(getServletContext());
             Game currGame = gm.getGames().get(gameNameFromSession);
             GameData gd = new GameData(currGame.getBoard().getBoardSize(), currGame.getBoard().getNumberOfSnakesAndLadders(),
-            currGame.getNumSoldiersToWin(), currGame.getPlayerList().size(),
-            ServletUtils.createPlayerNamesFromGame(currGame), ServletUtils.createPlayerTypesFromGame(currGame));
+            currGame.getNumSoldiersToWin(), currGame.getPlayerList().size(), ServletUtils.createPlayerTypesFromGame(currGame));
             
             HashMap<String, SnakeOrLadder> ladderMap = new HashMap<>();
             HashMap<String, SnakeOrLadder> snakeMap = new HashMap<>();

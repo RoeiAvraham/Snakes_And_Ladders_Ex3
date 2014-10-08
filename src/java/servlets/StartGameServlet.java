@@ -5,12 +5,16 @@
  */
 package servlets;
 
+import exception.DuplicatePlayerNamesException;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.Game;
 import model.GameManager;
 import utilities.Constants;
 import utilities.ServletUtils;
@@ -44,9 +48,17 @@ public class StartGameServlet extends HttpServlet {
              request.getSession(true).setAttribute(Constants.GAME_NAME, gameNameFromParameter);
              String playerNameFromParameter = request.getParameter(Constants.PLAYER_NAME).trim();
              request.getSession().setAttribute(Constants.PLAYER_NAME, playerNameFromParameter);
+             
              if (gameManager.getGames().get(gameNameFromParameter) == null) {
                  gameManager.addGame(gameNameFromParameter, ServletUtils.getXmlGameFromServletContext(getServletContext()));
              }
+             
+             Game currGame = gameManager.getGames().get(gameNameFromParameter);
+            try {
+                currGame.joinPlayer(playerNameFromParameter);
+            } catch (DuplicatePlayerNamesException ex) {
+                Logger.getLogger(StartGameServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         response.sendRedirect(Constants.GAME_HTML);
     }
