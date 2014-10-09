@@ -38,7 +38,7 @@ public class ServletUtils {
         return (Game) servletContext.getAttribute(GAME_XML_ATTRIBUTE_NAME);
     }
 
-    private static HashMap<String, LinkedList<Integer>> getNewlyJoinedPlayers(String gameName, ServletContext servletContext) {
+    public static HashMap<String, LinkedList<Integer>> getNewlyJoinedPlayers(String gameName, ServletContext servletContext) {
         if (servletContext.getAttribute(NEWLY_JOINED_PLAYERS_MAP) == null) {
             servletContext.setAttribute(NEWLY_JOINED_PLAYERS_MAP, new HashMap<String, LinkedList<Integer>>());
         }

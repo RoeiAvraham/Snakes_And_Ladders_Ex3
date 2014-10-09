@@ -37,7 +37,7 @@ public class GetGameListServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
-
+        
         try (PrintWriter out = response.getWriter()) {
             GameManager gm = ServletUtils.getGameManager(getServletContext());
             FullGames fg = new FullGames(createGameMap(gm));
