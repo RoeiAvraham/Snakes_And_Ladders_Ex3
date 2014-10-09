@@ -50,20 +50,12 @@ function bindSelectedGame() {
 
                 if (r.isXmlGameAndIsReady) // Game selected is a XML Game.
                 {
-
                     createDropDownPlayerName(r);
-                    createSubmitButton();
-                    ajaxSubmitStartButton();
-                    $("#playerNameForm").prepend("<br/>");
-                    $('#playerName').keyup(validate);
                 }
                 else // Game selected is a regular game.
                 {
                     createPlayerNameTextField(r);
-                    createSubmitButton();
-                    ajaxSubmitStartButton();
-                     $("#playerNameForm").prepend("<br/>");
-                    $('#playerName').keyup(validate);
+
                 }
                 createSubmitButton();
                 ajaxSubmitStartButton();
@@ -78,8 +70,7 @@ function bindSelectedGame() {
 
 function ajaxSubmitStartButton() {
     //add a function to the submit event
-
-    $("#playerNameForm").submit(function() {
+    $("#playerNameForm").submit(function () {
         jQuery.ajax({
             data: $(this).serialize(),
             url: this.action,
@@ -87,7 +78,7 @@ function ajaxSubmitStartButton() {
             error: function () {
                 console.error("Server unavailable or timeout");
             },
-            success: function(r) {
+            success: function (r) {
                 if (r == "game.html")
                 {
                     window.location.href = r;
@@ -95,7 +86,7 @@ function ajaxSubmitStartButton() {
                     if (!$("#error").length) {
                         $("body").append($('<div id="error" class="alert alert-danger text-center center-block" role="alert">\n\
                         Player name already exists, please choose another one. </div>').hide().fadeIn("slow"));
-                    }       
+                    }
                 }
             }
         });
