@@ -8,6 +8,16 @@ and open the template in the editor.
     Author     : ANAT-EL
 */
 
+#gameStatus{
+    font-size: 40px;
+    font-weight: bold;
+    position: absolute;
+    top: 150px;
+    width: 100%;
+    text-align:center;
+    background-color: #269abc;
+    border-radius: 15px;
+}
 #background {
     width: 100%; 
     height: 100%; 
@@ -96,11 +106,12 @@ td
 .numSoldiersLabel{
     position:absolute;
     right: 12px;
-    /*top:0px;*/
     color: green;
     font-weight: bold;
     font-size: 11px;
     background-color: azure;
+    
+
     /*margin:auto;*/
 
 }

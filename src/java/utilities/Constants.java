@@ -13,9 +13,12 @@ package utilities;
 public class Constants {
     
     public static final String GAME_NAME = "gameName";
+    public static final String SOLDIER_ID = "soldierID";
+    public static final String DICE_RES = "diceRes";
     public static final String GAME_NAME_ERROR = "gameName_error";
     public static final String XML_INVALID_ERROR = "xmlInvalidError";
     public static final String XML_FILE_ERROR = "xmlFileError";
+
     
     public static final String PLAYER_NAME = "playerName";
     public static final String BOARD_SIZE = "boardSize";
