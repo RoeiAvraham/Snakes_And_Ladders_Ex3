@@ -38,17 +38,15 @@ public class Game {
         playerList = new LinkedList<Player>();
         gameSrc = LoadedFrom.XML;
         m_board = new GameBoard(gameXml);
-        joinedCount = 0;
-
         int i = 0;
-        
+
         checkIfXmlGameAlreadyFinished(m_numSoldiersToWin, gameXml.getBoard().getCells().getCell(), gameXml.getBoard().getSize());
         checkNumOfSoldiersXml(gameXml.getBoard().getCells().getCell(), gameXml.getPlayers().getPlayer());
 
         for (xmlPackage.Players.Player p : gameXml.getPlayers().getPlayer()) {
-                if (playerNames.contains(p.getName())) {
-                    throw new DuplicatePlayerNamesXmlException();
-                }
+            if (playerNames.contains(p.getName())) {
+                throw new DuplicatePlayerNamesXmlException();
+            }
             playerNames.add(i, p.getName());
             if (p.getType() == HUMAN) {
                 playerList.add(new HumanPlayer(++i, m_board, gameSrc));
@@ -58,7 +56,7 @@ public class Game {
             }
             playerList.getLast().setPlayerName(playerNames.get(i - 1));
         }
-        
+
         m_board.setPlayersPosFromXml(gameXml, playerList, playerNames);
         getCurrentPlayerFromXml(gameXml, playerNames);
     }
@@ -99,8 +97,6 @@ public class Game {
         }
         return null;
     }
-    
-
     public Player getPlayerByName(String playerName) {
         for (Player p : playerList) {
             if (p.getPlayerName().equals(playerName)) {
