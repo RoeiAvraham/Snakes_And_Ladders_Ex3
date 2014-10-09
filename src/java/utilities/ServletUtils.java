@@ -1,7 +1,5 @@
 package utilities;
 
-import exception.DuplicatePlayerNamesException;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.servlet.ServletContext;

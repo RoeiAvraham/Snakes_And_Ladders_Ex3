@@ -4,7 +4,7 @@
 		<xjc-options>
 		</xjc-options>
 		<schema-sources>
-			<schema-source location='src/conf/xml-resources/jaxb/xmlBinding/snakesandladders.xsd' origLocation='snakesandladders.xsd'/>
+			<schema-source location='src/conf/xml-resources/jaxb/xmlBinding/snakesandladders.xsd' origLocation='web/snakesandladders.xsd'/>
 		</schema-sources>
 		<bindings>
 		</bindings>
