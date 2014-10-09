@@ -52,7 +52,7 @@ public class GetPlayerNamesStartXmlGame extends HttpServlet {
                 } else {
                     game = gameManager.getGames().get(gameNameFromParameter);
                 }
-                ArrayList<String> playerNames = ServletUtils.createHumanPlayerNamesList(game);
+                ArrayList<String> playerNames = ServletUtils.getHumanFreeNamesList(game);
                 
                 PlayerNamesGameName pngn = new PlayerNamesGameName(playerNames, gameNameFromParameter, true);
                 Gson gson = new Gson();

@@ -13,7 +13,9 @@ import java.util.Random;
 public class CompPlayer extends Player {
 
     public CompPlayer(int playerNum, String playerName, GameBoard board, LoadedFrom source) {
-        super(playerNum, playerName, board, source);
+        super(playerNum, board, source);
+        setPlayerName(playerName);
+        setIsJoined(true);
     }
 
     @Override

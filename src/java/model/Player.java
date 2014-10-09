@@ -21,6 +21,35 @@ public abstract class Player {
     protected int[] m_soldiersPos;
     private GameBoard m_board;
     private static final int EMPTY = 0;
+    private boolean isJoined;
+
+    /**
+     * @return the isJoined
+     */
+    public boolean isJoined() {
+        return isJoined;
+    }
+
+    /**
+     * @param isJoined the isJoined to set
+     */
+    public void setIsJoined(boolean isJoined) {
+        this.isJoined = isJoined;
+    }
+
+    /**
+     * @return the m_playerName
+     */
+    public String getPlayerName() {
+        return m_playerName;
+    }
+
+    /**
+     * @param m_playerName the m_playerName to set
+     */
+    public void setPlayerName(String m_playerName) {
+        this.m_playerName = m_playerName;
+    }
 
     public enum LoadedFrom {
 
@@ -36,9 +65,8 @@ public abstract class Player {
         return m_soldiersPos;
     }
 
-    public Player(final int playerNum, final String playerName, GameBoard board, LoadedFrom source) {
+    public Player(final int playerNum, GameBoard board, LoadedFrom source) {
         m_playerNum = playerNum;
-        m_playerName = playerName;
         m_soldiersPos = new int[NUM_SOLDIERS];
         m_board = board;
 
@@ -53,13 +81,8 @@ public abstract class Player {
                 m_soldiersPos[i] = EMPTY;
             }
         }
-    }
-
-    /**
-     * @return the m_playerName
-     */
-    public final String getPlayerName() {
-        return m_playerName;
+        m_playerName = null;
+        isJoined = false;
     }
 
     public abstract int chooseSoldierToMove();

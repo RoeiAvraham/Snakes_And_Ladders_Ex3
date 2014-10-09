@@ -38,7 +38,6 @@ public class GameManager
                 gameData.getNumOfLadders(),
                 gameData.getNumSoldiersToWin(),
                 gameData.getNumPlayers(),
-                gameData.getPlayerNames(),
                 gameData.getPlayerTypes(), gameName));
     }
     

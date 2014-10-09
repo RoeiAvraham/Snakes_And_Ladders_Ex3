@@ -17,6 +17,13 @@ and open the template in the editor.
     z-index: -1;  //Ensure div tag stays behind content; -999 might work, too. 
 }
 
+.red{
+    color: red;
+}
+
+.green{
+    color: green;
+}
 .snakeOrLadder {
     position:absolute;
 }

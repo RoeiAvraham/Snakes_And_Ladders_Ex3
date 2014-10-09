@@ -185,7 +185,6 @@ function setDiceAction() {
     });
 }
 
-
 function getDiceResFromServer()
 {
     $.ajax({

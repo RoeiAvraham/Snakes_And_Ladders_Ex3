@@ -7,9 +7,9 @@ package servlets;
 
 import com.google.gson.Gson;
 import exception.DuplicateGameNameException;
+import exception.DuplicatePlayerNamesException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -57,8 +57,9 @@ public class CreateNewGameServlet extends HttpServlet {
                 request.getSession(true).setAttribute(Constants.GAME_NAME, gameNameFromParameter);
                 String playerNameFromParameter = request.getParameter(Constants.PLAYER_NAME).trim();
                 request.getSession().setAttribute(Constants.PLAYER_NAME, playerNameFromParameter);
+                game.joinPlayer(playerNameFromParameter);
                 sendDataToClient(response, true, gameNameFromParameter);
-            } catch (DuplicateGameNameException ex) {
+            } catch (DuplicateGameNameException | DuplicatePlayerNamesException ex) {
                 sendDataToClient(response, false, gameNameFromParameter);
             }
         } else {
@@ -66,8 +67,7 @@ public class CreateNewGameServlet extends HttpServlet {
         }
 
     }
-
-//GameData gData = new GameData(request.gets)
+    
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -112,11 +112,9 @@ public class CreateNewGameServlet extends HttpServlet {
         int numSnakesFromParameter = Integer.parseInt(request.getParameter(Constants.NUM_OF_SNAKES));
         int numSoldiersToWinFromParameter = Integer.parseInt(request.getParameter(Constants.NUM_SOLDIERS_TO_WIN));
         int numPlayersFromParameter = Integer.parseInt(request.getParameter(Constants.NUM_OF_PLAYERS));
-        ArrayList<String> playerNames = createPlayerNamesFromRequest(request, numPlayersFromParameter);
         PlayerType[] playerTypes = createPlayerTypesFromRequest(request, numPlayersFromParameter);
 
-        return new GameData(boardSizeFromParameter, numSnakesFromParameter, numSoldiersToWinFromParameter, numPlayersFromParameter,
-                playerNames, playerTypes);
+        return new GameData(boardSizeFromParameter, numSnakesFromParameter, numSoldiersToWinFromParameter, numPlayersFromParameter, playerTypes);
     }
 
     private void sendDataToClient(HttpServletResponse response, boolean wasGameCreated, String gameName) throws IOException {

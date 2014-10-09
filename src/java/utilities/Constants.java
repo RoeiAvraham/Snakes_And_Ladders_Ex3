@@ -23,6 +23,7 @@ public class Constants {
     public static final String NUM_OF_PLAYERS = "totalPlayers";
     public static final String NUM_OF_HUMAN_PLAYERS = "humanPlayers";
     public static final String NUM_SOLDIERS_TO_WIN = "numSoldiersToWin";
+    public static final String PLAYER_EXISTS = "playerNameExists"; 
     
     public static final String GAME_HTML = "game.html";
 }
