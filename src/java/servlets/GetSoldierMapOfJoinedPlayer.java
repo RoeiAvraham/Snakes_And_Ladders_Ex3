@@ -41,7 +41,7 @@ public class GetSoldierMapOfJoinedPlayer extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("application/json");
 
-        String gameNameFromSession = SessionUtils.getGameName(request);
+        String gameNameFromSession = SessionUtils.getGameName(request); 
         GameManager gameManager = ServletUtils.getGameManager(getServletContext());
 
         HashMap<String, LinkedList<Integer>> newJoinedPlayers = ServletUtils.getNewlyJoinedPlayers(gameNameFromSession, getServletContext());
