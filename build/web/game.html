@@ -16,6 +16,9 @@ and open the template in the editor.
     </head>
 
     <body>
+        <audio id="diceSound" >
+            <source src="audio/diceSound.WAV" type="audio/wav">
+        </audio>
         <div id="background">
             <img src="images/backgroundPics/cloudlandscape.jpg" class="stretch" alt="" />
         </div>
@@ -32,17 +35,14 @@ and open the template in the editor.
                     </div>
                 </div>
             </div>
-            <a href="#" title="Click on the dice to start your turn" class="dice"></a>
+            <div title="Click on the dice to start your turn" class="dice"></div>
+            <div class="soldier" data-owner="1" data-id="1" data-cell="1">
+                <label class="numSoldiersLabel">4</label>
+                <img src ="images/humanPlayerPics/human1.png" class="soldierPic">
+            </div>
 
         </div>
-            <!---nadav
-            --->
-            <div data-owner="4" style="position:absolute">
-                <div style="border:1px solid #888">
-                    1
-                </div>
-                <img src="">
-                
-            </div>
+        <!--/soldier-->
+
     </body>
 </html>

@@ -1,14 +1,14 @@
-<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Anat/Desktop/Snakes_And_Ladders_Ex3/web/js/game.js</file>
-            <file>file:/C:/Users/Anat/Desktop/Snakes_And_Ladders_Ex3/src/java/model/Game.java</file>
+            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/servlets/GetGameInfoServlet.java</file>
+            <file>file:/C:/Snakes_And_Ladders_Ex3/web/js/game.js</file>
         </group>
     </open-files>
 </project-private>
+<<<<<<< HEAD
 =======
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
@@ -24,3 +24,5 @@
     </open-files>
 </project-private>
 >>>>>>> c741a1f2654c9f1712f33b47b22d66e87277299a
+=======
+>>>>>>> 3387c7d2532e8862444cbbc64abd221c4715a477

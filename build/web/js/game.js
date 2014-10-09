@@ -102,7 +102,6 @@ function placeSnakesOnBoard(snakeMap, boardSize)
         {
             $(".snakesandladdersDiv").append('<img  src="images/snakePics/snakeLeft.png" class="snakeOrLadder" id="' + index + '"/>');
             $("#" + index).css("left", topX + CELL_WIDTH / 2).css("top", topY + CELL_WIDTH / 2).css("width", width).css("height", height);
-
         }
     });
 }
@@ -122,7 +121,7 @@ function placeLaddersOnBOard(ladderMap, boardSize)
         if ((value.to % boardSize) == (value.from % boardSize))
         { //vertical
             $(".snakesandladdersDiv").append('<img  src="images/ladderPics/ladderVertical.png" class="snakeOrLadder" id="' + index + '"/>');
-            $("#" + index).css("left", topX + CELL_WIDTH / 2).css("top", topY + CELL_WIDTH / 2).css("height", height);
+            $("#" + index).css("left", topX + CELL_WIDTH / 2 - 30).css("top", topY + CELL_WIDTH / 2).css("height", height);
 
         } else if (value.from % boardSize == 0)
         {           //left 
@@ -160,71 +159,124 @@ function ajaxJoinedPlayerList()
 }
 
 
+
 $(function()
 {
     $.ajaxSetup({cache: false});
     setInterval(ajaxJoinedPlayerList, refreshRate);
     getGameInfo();
-    
-    var isRunning = false;
-    $('.dice').click( function() {
-           if (isRunning)
-               return;
-           isRunning = true;
-           $(this).css('background-image','url(\'images/dicePics/rolling_dice.gif\')');
-           $(this).css('cursor','arrow');
-           var that = this;
-           setTimeout( function() {
-               $(that).css('background-image','url(\'images/dicePics/die1.png\')');
-               isRunning = false;
-               //$('[data-owner="nadav"]').blink();
-           }, 2000);
-           return false;
-    });
-
+    setDiceAction();
+    setSoldiersAction();
 });
-//\*
+
+function setDiceAction() {
+    $('.dice').click(function() {
+
+        var audio = document.getElementById("diceSound");
+        audio.play();
+        getDiceResFromServer();
+        $(this).off();
+        $(this).css('background-image', 'url(\'images/dicePics/rolling_dice.gif\')');
+        $(this).css('cursor', 'arrow');
+        return false;
+    });
+}
+
+function getDiceResFromServer()
+{
+    $.ajax({
+        url: "diceRes",
+        type: "GET",
+        contentType: "application/json",
+        dataType: "json",
+        timeout: 2000,
+        success: function(r) {
+            setTimeout(function() {
+                $(".dice").css('background-image', 'url(\'images/dicePics/die' + r + '.png\')');
+                setDiceAction();
+                //$('[data-owner="nadav"]').blink();
+            }, 1000);
+        }
+    });
+    return false;
+}
+
+function setSoldiersAction()
+{
+    $('.soldier').click(function() {
+        //ajax request to play turn then move the soldier to the right cell..
+        var left, top;
+        var movingSoldier = this;
+        var currSoldierNumSoldiers = +$(this).find(".numSoldiersLabel").text();
+        if (currSoldierNumSoldiers > 1)
+        {
+            $(this).find(".numSoldiersLabel").text(+currSoldierNumSoldiers - 1);
+            var splittedSoldier = $(this).clone();
+//            var nextFreeSoldierId = ...
+
+            movingSoldier = splittedSoldier;
+            $(movingSoldier).attr("data-id",2);
+            $(movingSoldier).find(".numSoldiersLabel").text(1);
+            $("#board").append(movingSoldier);
+        }
+        var soldierAlreadyInDestCell = $("[class='soldier'][data-cell='7'][data-owner='1']");
+        var isThereAlreadySoldierInDest = soldierAlreadyInDestCell.length;
+        
+        $(movingSoldier).attr("data-cell", 7);        
+        
+        $(movingSoldier).animate({
+            left: '86px',
+            top: '-=86px'
+        });
+
+        if (isThereAlreadySoldierInDest)
+        {
+            var numSoldiersAtDestCell = +soldierAlreadyInDestCell.text().trim();
+            var numSoldiersInMovingSoldier = +$(movingSoldier).text().trim();
+            $(movingSoldier).find(".numSoldiersLabel").text(numSoldiersAtDestCell + numSoldiersInMovingSoldier);
+            soldierAlreadyInDestCell.remove();
+        }
+
+    });
+}
+
 //$('.soldier').click( function() {
 //    
 //    if (!$(this).attr('data-owner') == currentPlayerId)
 //        return;
-//            .
-//            
-//            .
-//            .
-//            
+//
 //});
-//*\
 
-function Soldier() {
-    var myPrivateVar, myPrivateMethod;
-    // A private counter variable
-    myPrivateVar = 0;
-    // A private function which logs any arguments
-    myPrivateMethod = function( foo ) {
-        console.log( foo );
-    };
-    
-    return {
-        // A public variable
-        myPublicVar: "foo",
-        // A public function utilizing privates
-        myPublicFunction: function( bar ) {
-        // Increment our private counter
-        myPrivateVar++;
-        // Call our private method using bar
-        myPrivateMethod( bar );
-    }
-  };
- 
-}
 
-x= new Soldier;
-x.myPublicFunction();
+//function Soldier() {
+//    var myPrivateVar, myPrivateMethod;
+//    // A private counter variable
+//    myPrivateVar = 0;
+//    // A private function which logs any arguments
+//    myPrivateMethod = function( foo ) {
+//        console.log( foo );
+//    };
+//    
+//    return {
+//        // A public variable
+//        myPublicVar: "foo",
+//        // A public function utilizing privates
+//        myPublicFunction: function( bar ) {
+//        // Increment our private counter
+//        myPrivateVar++;
+//        // Call our private method using bar
+//        myPrivateMethod( bar );
+//    }
+//  };
 
-function Soldier() {
-    this. 
-    this.owner;
-}
-var z = new MyClass();
-console.log(z.y);
+
+
+//x= new Soldier;
+//x.myPublicFunction();
+
+//function Soldier() {
+//    this. 
+//    this.owner;
+//}
+//var z = new MyClass();
+//console.log(z.y);
