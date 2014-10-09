@@ -42,6 +42,8 @@ public class StartGameServlet extends HttpServlet {
 
         String gameNameFromSession = SessionUtils.getGameName(request);
         GameManager gameManager = ServletUtils.getGameManager(getServletContext());
+        boolean isXmlCreation = false;
+        
         if (gameNameFromSession == null) {
             try {
                 String gameNameFromParameter = request.getParameter(Constants.GAME_NAME).trim();
@@ -50,6 +52,7 @@ public class StartGameServlet extends HttpServlet {
                 
                 //check if request came from xml creation:
                 if (currGame == null) {
+                    isXmlCreation = true;
                     currGame = ServletUtils.getXmlGameFromServletContext(getServletContext());
                 }
                 currGame.joinPlayer(playerNameFromParameter);
@@ -58,7 +61,14 @@ public class StartGameServlet extends HttpServlet {
                 request.getSession(true).setAttribute(Constants.GAME_NAME, gameNameFromParameter);
                 request.getSession().setAttribute(Constants.PLAYER_NAME, playerNameFromParameter);
                 
-                ServletUtils.addToNewlyJoinedPlayersMap(gameNameFromSession, currGame.getPlayerNumByName(playerNameFromParameter), getServletContext());
+                if (isXmlCreation)
+                {
+                    ServletUtils.addNewPlayersToJoinedPlayersMap(gameNameFromParameter, getServletContext());
+                }
+                else
+                {
+                    ServletUtils.addPlayerToNewlyJoinedPlayersMap(gameNameFromParameter, currGame.getPlayerNumByName(playerNameFromParameter), getServletContext());
+                }
                 
                 sendDataToClient(response, Constants.GAME_HTML);
             } catch (DuplicatePlayerNamesException ex) {

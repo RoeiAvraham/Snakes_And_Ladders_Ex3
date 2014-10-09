@@ -58,7 +58,7 @@ public class CreateNewGameServlet extends HttpServlet {
                 String playerNameFromParameter = request.getParameter(Constants.PLAYER_NAME).trim();
                 request.getSession().setAttribute(Constants.PLAYER_NAME, playerNameFromParameter);
                 game.joinPlayer(playerNameFromParameter);
-                ServletUtils.addToNewlyJoinedPlayersMap(gameNameFromSession, game.getPlayerNumByName(playerNameFromParameter), getServletContext());
+                ServletUtils.addNewPlayersToJoinedPlayersMap(gameNameFromParameter, getServletContext());
                 sendDataToClient(response, true, gameNameFromParameter);
             } catch (DuplicateGameNameException | DuplicatePlayerNamesException ex) {
                 sendDataToClient(response, false, gameNameFromParameter);
@@ -66,7 +66,6 @@ public class CreateNewGameServlet extends HttpServlet {
         } else {
             sendDataToClient(response, true, gameNameFromSession);
         }
-
     }
     
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

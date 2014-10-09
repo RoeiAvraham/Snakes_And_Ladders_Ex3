@@ -53,7 +53,7 @@ public class ServletUtils {
         return newJoinedPlayers;
     }
     
-    public static void addToNewlyJoinedPlayersMap(String gameName, Integer playerNum, ServletContext servletContext)
+    public static void addPlayerToNewlyJoinedPlayersMap(String gameName, Integer playerNum, ServletContext servletContext)
     {
         HashMap<String, LinkedList<Integer>> newJoinedPlayers = getNewlyJoinedPlayers(gameName, servletContext);   
         newJoinedPlayers.get(gameName).add(playerNum);
@@ -65,6 +65,17 @@ public class ServletUtils {
         HashMap<String, LinkedList<Integer>> newJoinedPlayers = getNewlyJoinedPlayers(gameName, servletContext);
         newJoinedPlayers.get(gameName).remove(playerNum);
         servletContext.setAttribute(NEWLY_JOINED_PLAYERS_MAP, newJoinedPlayers);
+    }
+    
+    public static void addNewPlayersToJoinedPlayersMap(String gameName, ServletContext servletContext)
+    {
+        for (Player p : getGameManager(servletContext).getGames().get(gameName).getPlayerList())
+        {
+            if (p.isJoined())
+            {
+                addPlayerToNewlyJoinedPlayersMap(gameName, p.getPlayerNum(),servletContext);
+            }
+        }
     }
 
     public static Player.PlayerType[] createPlayerTypesFromRequest(HttpServletRequest request, int numPlayers) {
