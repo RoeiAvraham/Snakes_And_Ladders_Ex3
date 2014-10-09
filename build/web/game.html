@@ -19,33 +19,30 @@ and open the template in the editor.
         <audio id="diceSound" >
             <source src="audio/diceSound.WAV" type="audio/wav">
         </audio>
-            <div id="background">
-                <img src="images/backgroundPics/cloudlandscape.jpg" class="stretch" alt="" />
-            </div>
-            <div id="board" class="boardMainDiv" align="center">
-                <div class="snakesandladdersDiv"></div>
-                <div class = "playerListMainDiv">
-                    <div class="left-right">
-                        <h3><u>Players joined to this game:</u></h3><br>
-                    </div>
-                    <div class="clearfix left-block text-left">
-                        <div class="input">
-                            <select id="playerList" class="selectBox" data-style="btn-primary"  multiple="multiple" disabled>
-                            </select>   
-                        </div>
+        <div id="background">
+            <img src="images/backgroundPics/cloudlandscape.jpg" class="stretch" alt="" />
+        </div>
+        <div id="board" class="boardMainDiv" align="center">
+            <div class="snakesandladdersDiv"></div>
+            <div class = "playerListMainDiv">
+                <div class="left-right">
+                    <h3><u>Players joined to this game:</u></h3><br>
+                </div>
+                <div class="clearfix left-block text-left">
+                    <div class="input">
+                        <select id="playerList" class="selectBox" data-style="btn-primary"  multiple="multiple" disabled>
+                        </select>   
                     </div>
                 </div>
-                <div title="Click on the dice to start your turn" class="dice"></div>
-
             </div>
-            <!---nadav
-            --->
-            <div data-owner="4" style="position:absolute">
-                <div style="border:1px solid #888">
-                    1
-                </div>
-                <img src="">
-
+            <div title="Click on the dice to start your turn" class="dice"></div>
+            <div class="soldier" data-owner="1" data-id="1" data-cell="1">
+                <label class="numSoldiersLabel">4</label>
+                <img src ="images/humanPlayerPics/human1.png" class="soldierPic">
             </div>
+
+        </div>
+        <!--/soldier-->
+
     </body>
 </html>

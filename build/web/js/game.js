@@ -121,7 +121,7 @@ function placeLaddersOnBOard(ladderMap, boardSize)
         if ((value.to % boardSize) == (value.from % boardSize))
         { //vertical
             $(".snakesandladdersDiv").append('<img  src="images/ladderPics/ladderVertical.png" class="snakeOrLadder" id="' + index + '"/>');
-            $("#" + index).css("left", topX + CELL_WIDTH / 2).css("top", topY + CELL_WIDTH / 2).css("height", height);
+            $("#" + index).css("left", topX + CELL_WIDTH / 2 - 30).css("top", topY + CELL_WIDTH / 2).css("height", height);
 
         } else if (value.from % boardSize == 0)
         {           //left 
@@ -166,10 +166,12 @@ $(function()
     setInterval(ajaxJoinedPlayerList, refreshRate);
     getGameInfo();
     setDiceAction();
+    setSoldiersAction();
 });
 
 function setDiceAction() {
     $('.dice').click(function() {
+
         var audio = document.getElementById("diceSound");
         audio.play();
         getDiceResFromServer();
@@ -179,6 +181,7 @@ function setDiceAction() {
         return false;
     });
 }
+
 
 function getDiceResFromServer()
 {
@@ -199,6 +202,44 @@ function getDiceResFromServer()
     return false;
 }
 
+function setSoldiersAction()
+{
+    $('.soldier').click(function() {
+        //ajax request to play turn then move the soldier to the right cell..
+        var left, top;
+        var movingSoldier = this;
+        var currSoldierNumSoldiers = +$(this).find(".numSoldiersLabel").text();
+        if (currSoldierNumSoldiers > 1)
+        {
+            $(this).find(".numSoldiersLabel").text(+currSoldierNumSoldiers - 1);
+            var splittedSoldier = $(this).clone();
+//            var nextFreeSoldierId = ...
+
+            movingSoldier = splittedSoldier;
+            $(movingSoldier).attr("data-id",2);
+            $(movingSoldier).find(".numSoldiersLabel").text(1);
+            $("#board").append(movingSoldier);
+        }
+        var soldierAlreadyInDestCell = $("[class='soldier'][data-cell='7'][data-owner='1']");
+        var isThereAlreadySoldierInDest = soldierAlreadyInDestCell.length;
+        
+        $(movingSoldier).attr("data-cell", 7);        
+        
+        $(movingSoldier).animate({
+            left: '86px',
+            top: '-=86px'
+        });
+
+        if (isThereAlreadySoldierInDest)
+        {
+            var numSoldiersAtDestCell = +soldierAlreadyInDestCell.text().trim();
+            var numSoldiersInMovingSoldier = +$(movingSoldier).text().trim();
+            $(movingSoldier).find(".numSoldiersLabel").text(numSoldiersAtDestCell + numSoldiersInMovingSoldier);
+            soldierAlreadyInDestCell.remove();
+        }
+
+    });
+}
 
 //$('.soldier').click( function() {
 //    

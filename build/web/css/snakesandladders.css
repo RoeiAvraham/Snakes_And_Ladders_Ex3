@@ -57,6 +57,7 @@ a
     text-align:left;
 }
 
+
 .dice
 {
     position: absolute;
@@ -85,6 +86,34 @@ td
     font-size: 12px;
 }
 
+.numSoldiersLabel{
+    position:absolute;
+    right: 12px;
+    /*top:0px;*/
+    color: green;
+    font-weight: bold;
+    font-size: 11px;
+    background-color: azure;
+    /*margin:auto;*/
+    
+}
+
+.soldierPic
+{
+    position:absolute;
+    top:12px;
+    left: 0;
+    width: 32px;
+    height: 32px;
+}
+.soldier{
+    position: absolute;
+    top:354px;
+    left:2px;
+    text-align: center;
+    width: 32px;
+    height: 44px;
+}
 .selectBox
 {
     width: 200px;
