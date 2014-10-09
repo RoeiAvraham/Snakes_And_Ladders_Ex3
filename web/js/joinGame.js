@@ -26,7 +26,7 @@ function refreshGamesList(fullGames) {
         }
         else
         {
-            $('<option class="red" title="Game is Full">' + index + '    -  Full game</option>').attr('disabled','disabled').appendTo($("#gameslist"));
+            $('<option class="red" title="Game is Full">' + index + '    -  Full game</option>').attr('disabled', 'disabled').appendTo($("#gameslist"));
         }
     });
     $("#gameslist").val(selected_item);
@@ -43,28 +43,24 @@ function bindSelectedGame() {
                 console.error("Server unavailable or timeout");
             },
             success: function (r) {
-                if ($("#playerNameForm").length>0){
+                if ($("#playerNameForm").length > 0) {
                     $("#playerNameForm").remove();
                     $("#form2Div").remove();
                 }
 
                 if (r.isXmlGameAndIsReady) // Game selected is a XML Game.
                 {
-                    
                     createDropDownPlayerName(r);
-                    createSubmitButton();
-                    ajaxSubmitStartButton();
-                    $("#playerNameForm").prepend("<br/>");
-                    $('#playerName').keyup(validate);
                 }
                 else // Game selected is a regular game.
                 {
                     createPlayerNameTextField(r);
-                    createSubmitButton();
-                    ajaxSubmitStartButton();
-                     $("#playerNameForm").prepend("<br/>");
-                    $('#playerName').keyup(validate);
+
                 }
+                createSubmitButton();
+                ajaxSubmitStartButton();
+                $("#playerNameForm").prepend("<br/>");
+                $('#playerName').keyup(validate);
             }
         });
 
@@ -74,15 +70,15 @@ function bindSelectedGame() {
 
 function ajaxSubmitStartButton() {
     //add a function to the submit event
-    $("#playerNameForm").submit(function() {
+    $("#playerNameForm").submit(function () {
         jQuery.ajax({
             data: $(this).serialize(),
             url: this.action,
             timeout: 2000,
-            error: function() {
+            error: function () {
                 console.error("Server unavailable or timeout");
             },
-            success: function(r) {
+            success: function (r) {
                 if (r == "game.html")
                 {
                     window.location.href = r;
@@ -90,7 +86,7 @@ function ajaxSubmitStartButton() {
                     if (!$("#error").length) {
                         $("body").append($('<div id="error" class="alert alert-danger text-center center-block" role="alert">\n\
                         Player name already exists, please choose another one. </div>').hide().fadeIn("slow"));
-                    }       
+                    }
                 }
             }
         });
@@ -110,16 +106,16 @@ function validate()
 
     if ($("#error").length)
     {
-        $('#error').fadeOut("slow",function() {
+        $('#error').fadeOut("slow", function () {
             $(this).remove();
         });
     }
 }
 
-$(function () 
+$(function ()
 {
     $.ajaxSetup({cache: false});
     setInterval(ajaxGameList, refreshRate);
     bindSelectedGame();
-    
+
 });
