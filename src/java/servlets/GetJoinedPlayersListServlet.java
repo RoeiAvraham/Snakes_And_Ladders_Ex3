@@ -53,7 +53,7 @@ public class GetJoinedPlayersListServlet extends HttpServlet {
             playerNames = ServletUtils.getJoinedPlayerNames(currGame);
             playerTypes = ServletUtils.getJoinedPlayerTypes(currGame);
             
-            int howManyLeftToJoin = (currGame.getM_numPlayers()) - (playerNames.size());
+            int howManyLeftToJoin = currGame.getM_numPlayers() - currGame.getJoinedCount();
             
             JoinedPlayerNamesTypes jpnt = new JoinedPlayerNamesTypes(playerNames,playerTypes,howManyLeftToJoin);
             

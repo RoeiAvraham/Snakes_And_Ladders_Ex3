@@ -28,7 +28,7 @@ public class Game {
     private Player winner = null;
     private LoadedFrom gameSrc;
     boolean isStarted = false;
-    int joinedCount;
+    private int joinedCount;
 
     public Game(Snakesandladders gameXml) throws XmlIsInvalidException {
         gameName = gameXml.getName();
@@ -299,7 +299,7 @@ public class Game {
     }
 
     public boolean isGameStarted() {
-        isStarted = joinedCount == getM_numPlayers();
+        isStarted = getJoinedCount() == getM_numPlayers();
         return isStarted;
     }
 
@@ -336,5 +336,12 @@ public class Game {
      */
     public String getGameName() {
         return gameName;
+    }
+
+    /**
+     * @return the joinedCount
+     */
+    public int getJoinedCount() {
+        return joinedCount;
     }
 }
