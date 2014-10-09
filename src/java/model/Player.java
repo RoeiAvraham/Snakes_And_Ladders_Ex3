@@ -81,6 +81,10 @@ public abstract class Player {
                 m_soldiersPos[i] = EMPTY;
             }
         }
+<<<<<<< HEAD
+=======
+        m_playerName = null;
+>>>>>>> JoinGameRewrite
         isJoined = false;
     }
 

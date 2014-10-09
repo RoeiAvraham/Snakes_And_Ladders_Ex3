@@ -28,6 +28,7 @@ public class Game {
     private Player winner = null;
     private LoadedFrom gameSrc;
     boolean isStarted = false;
+    int joinedCount;
 
     public Game(Snakesandladders gameXml) throws XmlIsInvalidException {
         gameName = gameXml.getName();
@@ -37,7 +38,12 @@ public class Game {
         playerList = new LinkedList<Player>();
         gameSrc = LoadedFrom.XML;
         m_board = new GameBoard(gameXml);
+<<<<<<< HEAD
         
+=======
+        joinedCount = 0;
+
+>>>>>>> JoinGameRewrite
         int i = 0;
         
         checkIfXmlGameAlreadyFinished(m_numSoldiersToWin, gameXml.getBoard().getCells().getCell(), gameXml.getBoard().getSize());
@@ -51,8 +57,14 @@ public class Game {
             if (p.getType() == HUMAN) {
                 playerList.add(new HumanPlayer(++i, m_board, gameSrc));
             } else if (p.getType() == COMPUTER) {
+<<<<<<< HEAD
                 playerList.add(new CompPlayer(++i, m_board, gameSrc));
+=======
+                playerList.add(new CompPlayer(++i, p.getName(), m_board, gameSrc));
+                joinedCount++;
+>>>>>>> JoinGameRewrite
             }
+            playerList.getLast().setPlayerName(playerNames.get(i - 1));
         }
         
         m_board.setPlayersPosFromXml(gameXml, playerList, playerNames);
@@ -60,6 +72,7 @@ public class Game {
     }
 
     public void joinPlayer(String playerName) throws DuplicatePlayerNamesException {
+<<<<<<< HEAD
         if (doesPlayerNameAlreadyExist(playerName)) {
             throw new DuplicatePlayerNamesException();
         }
@@ -78,16 +91,35 @@ public class Game {
             newPlayer.setIsJoined(true);
         }        
         
+=======
+        if (doesPlayerNameAlreadyExistAndJoined(playerName)) {
+            throw new DuplicatePlayerNamesException();
+        }
+
+        Player newPlayer;
+
+        if (gameSrc == LoadedFrom.REG) {
+            newPlayer = getNextPlayerInListStillNotJoined();
+            newPlayer.setPlayerName(playerName);
+        } else {
+            newPlayer = getPlayerByName(playerName);
+        }
+        newPlayer.setIsJoined(true);
+        joinedCount++;
+>>>>>>> JoinGameRewrite
     }
 
-    private boolean doesPlayerNameAlreadyExist(String name) {
+    private boolean doesPlayerNameAlreadyExistAndJoined(String name) {
         for (Player p : playerList) {
-            if (p.getPlayerName().equals(name)) {
-                return true;
+            if (p.getPlayerName() != null)
+            {
+                if (p.getPlayerName().equals(name) && p.isJoined())
+                    return true;
             }
         }
         return false;
     }
+<<<<<<< HEAD
     
     private Player getNextPlayerInListStillNotJoined()
     {
@@ -95,11 +127,18 @@ public class Game {
         {
             if (!p.isJoined())
             {
+=======
+
+    public Player getNextPlayerInListStillNotJoined() {
+        for (Player p : playerList) {
+            if (!p.isJoined()) {
+>>>>>>> JoinGameRewrite
                 return p;
             }
         }
         return null;
     }
+<<<<<<< HEAD
     
     private Player getPlayerByName(String playerName)
     {
@@ -107,13 +146,24 @@ public class Game {
         {
             if (p.getPlayerName().equals(playerName))
             {
+=======
+
+    public Player getPlayerByName(String playerName) {
+        for (Player p : playerList) {
+            if (p.getPlayerName().equals(playerName)) {
+>>>>>>> JoinGameRewrite
                 return p;
             }
         }
         return null;
     }
+<<<<<<< HEAD
     
     public Game(int boardSize, int numOfLadders, int numSoldiersToWin, int numPlayers, Player.PlayerType[] playerTypes , String gameName) {
+=======
+
+    public Game(int boardSize, int numOfLadders, int numSoldiersToWin, int numPlayers, Player.PlayerType[] playerTypes, String gameName) {
+>>>>>>> JoinGameRewrite
 
         this.gameName = gameName;
         m_board = new GameBoard(boardSize, numOfLadders, numPlayers);
@@ -121,11 +171,21 @@ public class Game {
         m_numPlayers = numPlayers;
         playerList = new LinkedList<>();
         gameSrc = LoadedFrom.REG;
+<<<<<<< HEAD
         
         int i;
         for (i = 0; i < m_numPlayers; i++) {
             if (playerTypes[i] == Player.PlayerType.COMP) {
                 playerList.add(new CompPlayer(i + 1, m_board, gameSrc));
+=======
+
+        int i;
+        int compInd = 0;
+        for (i = 0; i < m_numPlayers; i++) {
+            if (playerTypes[i] == Player.PlayerType.COMP) {
+                playerList.add(new CompPlayer(i + 1, "Comp" + ++compInd, m_board, gameSrc));
+                joinedCount++;
+>>>>>>> JoinGameRewrite
             } else {
                 playerList.add(new HumanPlayer(i + 1, m_board, gameSrc));
             }
@@ -297,14 +357,13 @@ public class Game {
         }
         return xmlPlayers;
     }
-    
-    public boolean isXMLGame()
-    {
+
+    public boolean isXMLGame() {
         return gameSrc.equals(LoadedFrom.XML);
     }
 
     public boolean isGameStarted() {
-        isStarted = playerList.size() == getM_numPlayers();
+        isStarted = joinedCount == getM_numPlayers();
         return isStarted;
     }
 
