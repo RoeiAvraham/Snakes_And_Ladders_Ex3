@@ -95,7 +95,7 @@ td
     font-size: 11px;
     background-color: azure;
     /*margin:auto;*/
-    
+
 }
 
 .soldierPic
@@ -113,6 +113,18 @@ td
     text-align: center;
     width: 32px;
     height: 44px;
+}
+
+#arrow{
+    position: absolute;
+    right: -190px;
+    top: 320px;
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: FlipH;
+    -ms-filter: "FlipH";
 }
 .selectBox
 {

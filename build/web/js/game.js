@@ -7,6 +7,8 @@
 var refreshRate = 2000; //miliseconds
 var CELL_WIDTH = 86;
 var boardSize;
+var currPlayer;
+
 function getGameInfo()
 {
     $.ajax({
@@ -165,13 +167,14 @@ $(function()
     $.ajaxSetup({cache: false});
     setInterval(ajaxJoinedPlayerList, refreshRate);
     getGameInfo();
-    setDiceAction();
-    setSoldiersAction();
+    $("#arrow").hide();
+    initComponentsForNewTurn();
 });
 
 function setDiceAction() {
+    $(".dice").css("cursor", "pointer");
     $('.dice').click(function() {
-
+        $("#arrow").hide();
         var audio = document.getElementById("diceSound");
         audio.play();
         getDiceResFromServer();
@@ -195,7 +198,9 @@ function getDiceResFromServer()
             setTimeout(function() {
                 $(".dice").css('background-image', 'url(\'images/dicePics/die' + r + '.png\')');
                 setDiceAction();
-                //$('[data-owner="nadav"]').blink();
+                
+                setSoldiersAction();
+                
             }, 1000);
         }
     });
@@ -203,8 +208,8 @@ function getDiceResFromServer()
 }
 
 function setSoldiersAction()
-{
-    $('.soldier').click(function() {
+{   $("[class='soldier'][data-owner=1]").css("cursor","pointer");
+    $("[class='soldier'][data-owner=1]").click(function() {
         //ajax request to play turn then move the soldier to the right cell..
         var left, top;
         var movingSoldier = this;
@@ -241,6 +246,18 @@ function setSoldiersAction()
     });
 }
 
+function initComponentsForNewTurn()
+{
+    //set player pic
+    $("#arrow").show();
+    setDiceAction();
+    
+    //make dice clickable- until then disabled
+    //all soldiers not clickable.
+    //add quit button ?
+    
+    
+}
 //$('.soldier').click( function() {
 //    
 //    if (!$(this).attr('data-owner') == currentPlayerId)
