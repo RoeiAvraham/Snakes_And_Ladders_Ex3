@@ -5,7 +5,6 @@
  */
 package model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import servlets.GetGameInfoServlet.SnakeOrLadder;
 
@@ -20,8 +19,6 @@ public class GameData {
     private int numSoldiersToWin;
     private int numPlayers;
     private Player.PlayerType[] playerTypes;
-    private HashMap<String, SnakeOrLadder> ladderMap;
-    private HashMap<String, SnakeOrLadder> snakeMap;
 
     public GameData(int boardSize, int numOfLadders, int numSoldiersToWin, int numPlayers, Player.PlayerType[] playerTypes) {
         this.boardSize = boardSize;
@@ -100,10 +97,5 @@ public class GameData {
     public void setPlayerTypes(Player.PlayerType[] playerTypes)
     {
         this.playerTypes = playerTypes;
-    }
-    
-    public void setSnakeAndLadderMaps(HashMap<String, SnakeOrLadder> ladderMap, HashMap<String, SnakeOrLadder> snakeMap) {
-        this.ladderMap = ladderMap;
-        this.snakeMap = snakeMap;
     }
 }

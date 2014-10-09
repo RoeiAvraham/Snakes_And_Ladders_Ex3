@@ -15,8 +15,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Game;
-import model.GameData;
 import model.GameManager;
+import utilities.Constants;
 import utilities.ServletUtils;
 import utilities.SessionUtils;
 
@@ -42,16 +42,20 @@ public class GetGameInfoServlet extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             String gameNameFromSession = SessionUtils.getGameName(request);
             GameManager gm = ServletUtils.getGameManager(getServletContext());
-            Game currGame = gm.getGames().get(gameNameFromSession);
-            GameData gd = new GameData(currGame.getBoard().getBoardSize(), currGame.getBoard().getNumberOfSnakesAndLadders(),
-            currGame.getNumSoldiersToWin(), currGame.getPlayerList().size(), ServletUtils.getJoinedPlayerTypes(currGame));
+            Game currGame = gm.getGames().get(gameNameFromSession);     
+            
             HashMap<String, SnakeOrLadder> ladderMap = new HashMap<>();
             HashMap<String, SnakeOrLadder> snakeMap = new HashMap<>();
             ServletUtils.buildLocationMapOfLadders(this,currGame, ladderMap, snakeMap);
-            gd.setSnakeAndLadderMaps(ladderMap, snakeMap);
+            
+            gameInfoForUi gifu = new gameInfoForUi(currGame.getBoard().getBoardSize(), ladderMap, snakeMap);
+            
+            getServletContext().getRequestDispatcher("/getcurrPlayer").include(request, response);
+            
+            
             
             Gson gson = new Gson();
-            String jsonResponse = gson.toJson(gd);
+            String jsonResponse = gson.toJson(gifu);
             jsonResponse = jsonResponse.substring(0, jsonResponse.length() - 1);
             jsonResponse = jsonResponse.concat(",\"gameName\":\"" + gameNameFromSession + "\"}");
 
@@ -59,6 +63,7 @@ public class GetGameInfoServlet extends HttpServlet {
             out.flush();
         }
     }
+    
     public class SnakeOrLadder
     {
         int from;
@@ -70,6 +75,22 @@ public class GetGameInfoServlet extends HttpServlet {
             this.to = to;
         }
     }
+    
+    public class gameInfoForUi
+    {   
+        int boardSize;
+        HashMap<String, SnakeOrLadder> ladderMap;
+        HashMap<String, SnakeOrLadder> snakeMap;
+        
+        public gameInfoForUi(int boardSize, HashMap<String, SnakeOrLadder> ladderMap, HashMap<String, SnakeOrLadder> snakeMap)
+        {
+            this.boardSize = boardSize;
+            this.ladderMap = ladderMap;
+            this.snakeMap = snakeMap;
+        }
+    }
+    
+    
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 
     /**

@@ -110,10 +110,10 @@ public class ServletUtils {
         for (Cell cell : game.getBoard().getCells()) {
             if (cell.getDest() != Cell.NO_DEST) {
                 if (cell.getCellNum() < cell.getDest()) {
-                    ladderMap.put("ladder" + ladderCounter, ggis. new SnakeOrLadder(cell.getCellNum(), cell.getDest()));
+                    ladderMap.put("ladder" + ladderCounter, ggis.new SnakeOrLadder(cell.getCellNum(), cell.getDest()));
                     ladderCounter++;
                 } else {
-                    snakeMap.put("snake" + snakeCounter, ggis. new  SnakeOrLadder(cell.getCellNum(),cell.getDest()));
+                    snakeMap.put("snake" + snakeCounter, ggis.new  SnakeOrLadder(cell.getCellNum(),cell.getDest()));
                     snakeCounter++;
                 }
             }

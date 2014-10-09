@@ -81,10 +81,10 @@ public class Game {
 
     private boolean doesPlayerNameAlreadyExistAndJoined(String name) {
         for (Player p : playerList) {
-            if (p.getPlayerName() != null)
-            {
-                if (p.getPlayerName().equals(name) && p.isJoined())
+            if (p.getPlayerName() != null) {
+                if (p.getPlayerName().equals(name) && p.isJoined()) {
                     return true;
+                }
             }
         }
         return false;
@@ -98,6 +98,7 @@ public class Game {
         }
         return null;
     }
+    
     public Player getPlayerByName(String playerName) {
         for (Player p : playerList) {
             if (p.getPlayerName().equals(playerName)) {
@@ -173,6 +174,19 @@ public class Game {
             }
         }
 
+    }
+    
+    public int getPlayerIdInListByName(String playerName)
+    {
+        int res = 0;
+        
+        for (int i = 0; i < playerList.size(); i++)
+        {
+            if (playerList.get(i).getPlayerName().equals(playerName))
+                res = i;
+        }
+        
+        return res;
     }
 
     public void setCurrPlayer(Player curr) {

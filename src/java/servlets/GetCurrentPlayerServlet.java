@@ -8,7 +8,6 @@ package servlets;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Game;
 import model.GameManager;
-import model.Player;
 import utilities.ServletUtils;
 import utilities.SessionUtils;
 
@@ -24,8 +22,8 @@ import utilities.SessionUtils;
  *
  * @author roei.avraham
  */
-@WebServlet(name = "GetJoinedPlayersListServlet", urlPatterns = {"/getjoinedplayers"})
-public class GetJoinedPlayersListServlet extends HttpServlet {
+@WebServlet(name = "GetCurrentPlayerServlet", urlPatterns = {"/getcurrplayer"})
+public class GetCurrentPlayerServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,24 +37,19 @@ public class GetJoinedPlayersListServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
-        ArrayList<String> playerNames;
-        Player.PlayerType[] playerTypes;
-        
-        try (PrintWriter out = response.getWriter()) 
-        {
+        try (PrintWriter out = response.getWriter()) {
+            
             String gameNameFromSession = SessionUtils.getGameName(request);
             GameManager gm = ServletUtils.getGameManager(getServletContext());
             Game currGame = gm.getGames().get(gameNameFromSession);
             
-            playerNames = ServletUtils.getJoinedPlayerNames(currGame);
-            playerTypes = ServletUtils.getJoinedPlayerTypes(currGame);
+            String playerName = currGame.getCurrPlayer().getPlayerName();
+            int playerId = currGame.getPlayerIdInListByName(playerName);
             
-            int howManyLeftToJoin = currGame.getM_numPlayers() - currGame.getJoinedCount();
-            
-            JoinedPlayerNamesTypes jpnt = new JoinedPlayerNamesTypes(playerNames,playerTypes,howManyLeftToJoin);
+            playerNameId pni = new playerNameId(playerName, playerId);
             
             Gson gson = new Gson();
-            String jsonResponse = gson.toJson(jpnt);
+            String jsonResponse = gson.toJson(pni);
             out.print(jsonResponse);
             out.flush();
         }
@@ -101,17 +94,16 @@ public class GetJoinedPlayersListServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
     
-    class JoinedPlayerNamesTypes
+    class playerNameId
     {
-        ArrayList<String> playerNames;
-        Player.PlayerType[] playerTypes;
-        int howManyLeftToJoin;
+        String playerName;
+        int playerId;
         
-        public JoinedPlayerNamesTypes(ArrayList<String> playerNames, Player.PlayerType[] playerTypes, int howManyLeftToJoin)
+        public playerNameId(String playerName, int playerId)
         {
-            this.playerNames = playerNames;
-            this.playerTypes = playerTypes;
-            this.howManyLeftToJoin = howManyLeftToJoin;
+            this.playerName = playerName;
+            this.playerId = playerId;
         }
     }
+
 }
