@@ -10,8 +10,8 @@ package model;
  */
 public class HumanPlayer extends Player {
 
-    public HumanPlayer(int playerNum, String playerName, GameBoard board, LoadedFrom source) {
-        super(playerNum, playerName, board, source);
+    public HumanPlayer(int playerNum, GameBoard board, LoadedFrom source) {
+        super(playerNum, board, source);
     }
 
     @Override

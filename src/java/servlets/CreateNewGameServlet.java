@@ -9,7 +9,6 @@ import com.google.gson.Gson;
 import exception.DuplicateGameNameException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -112,11 +111,9 @@ public class CreateNewGameServlet extends HttpServlet {
         int numSnakesFromParameter = Integer.parseInt(request.getParameter(Constants.NUM_OF_SNAKES));
         int numSoldiersToWinFromParameter = Integer.parseInt(request.getParameter(Constants.NUM_SOLDIERS_TO_WIN));
         int numPlayersFromParameter = Integer.parseInt(request.getParameter(Constants.NUM_OF_PLAYERS));
-        ArrayList<String> playerNames = createPlayerNamesFromRequest(request, numPlayersFromParameter);
         PlayerType[] playerTypes = createPlayerTypesFromRequest(request, numPlayersFromParameter);
 
-        return new GameData(boardSizeFromParameter, numSnakesFromParameter, numSoldiersToWinFromParameter, numPlayersFromParameter,
-                playerNames, playerTypes);
+        return new GameData(boardSizeFromParameter, numSnakesFromParameter, numSoldiersToWinFromParameter, numPlayersFromParameter, playerTypes);
     }
 
     private void sendDataToClient(HttpServletResponse response, boolean wasGameCreated, String gameName) throws IOException {

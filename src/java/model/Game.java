@@ -36,36 +36,48 @@ public class Game {
         m_numPlayers = gameXml.getPlayers().getPlayer().size();
         playerList = new LinkedList<Player>();
         gameSrc = LoadedFrom.XML;
-
         m_board = new GameBoard(gameXml);
+        
         int i = 0;
-
+        
         checkIfXmlGameAlreadyFinished(m_numSoldiersToWin, gameXml.getBoard().getCells().getCell(), gameXml.getBoard().getSize());
         checkNumOfSoldiersXml(gameXml.getBoard().getCells().getCell(), gameXml.getPlayers().getPlayer());
 
         for (xmlPackage.Players.Player p : gameXml.getPlayers().getPlayer()) {
-            if (playerNames.contains(p.getName())) {
-                throw new DuplicatePlayerNamesXmlException();
-            }
+                if (playerNames.contains(p.getName())) {
+                    throw new DuplicatePlayerNamesXmlException();
+                }
             playerNames.add(i, p.getName());
             if (p.getType() == HUMAN) {
-                playerList.add(new HumanPlayer(++i, p.getName(), m_board, gameSrc));
+                playerList.add(new HumanPlayer(++i, m_board, gameSrc));
             } else if (p.getType() == COMPUTER) {
-                playerList.add(new CompPlayer(++i, p.getName(), m_board, gameSrc));
+                playerList.add(new CompPlayer(++i, m_board, gameSrc));
             }
         }
-
+        
         m_board.setPlayersPosFromXml(gameXml, playerList, playerNames);
         getCurrentPlayerFromXml(gameXml, playerNames);
     }
 
-    public void addNewPlayer(String playerName) throws DuplicatePlayerNamesException {
+    public void joinPlayer(String playerName) throws DuplicatePlayerNamesException {
         if (doesPlayerNameAlreadyExist(playerName)) {
             throw new DuplicatePlayerNamesException();
         }
-        HumanPlayer newPlayer = new HumanPlayer(playerList.size() + 1, playerName, m_board, LoadedFrom.REG);
-        playerList.add(newPlayer);
-        m_numPlayers++;
+        
+        Player newPlayer;
+                
+        if (gameSrc == LoadedFrom.REG)
+        {
+            newPlayer = getNextPlayerInListStillNotJoined();
+            newPlayer.setIsJoined(true);
+            newPlayer.setPlayerName(playerName);
+        }
+        else
+        {
+            newPlayer = getPlayerByName(playerName);
+            newPlayer.setIsJoined(true);
+        }        
+        
     }
 
     private boolean doesPlayerNameAlreadyExist(String name) {
@@ -76,9 +88,32 @@ public class Game {
         }
         return false;
     }
-
-    public Game(int boardSize, int numOfLadders, int numSoldiersToWin, int numPlayers,
-            ArrayList<String> playerNames, Player.PlayerType[] playerTypes, String gameName) {
+    
+    private Player getNextPlayerInListStillNotJoined()
+    {
+        for (Player p : playerList)
+        {
+            if (!p.isJoined())
+            {
+                return p;
+            }
+        }
+        return null;
+    }
+    
+    private Player getPlayerByName(String playerName)
+    {
+        for (Player p : playerList)
+        {
+            if (p.getPlayerName().equals(playerName))
+            {
+                return p;
+            }
+        }
+        return null;
+    }
+    
+    public Game(int boardSize, int numOfLadders, int numSoldiersToWin, int numPlayers, Player.PlayerType[] playerTypes , String gameName) {
 
         this.gameName = gameName;
         m_board = new GameBoard(boardSize, numOfLadders, numPlayers);
@@ -86,12 +121,13 @@ public class Game {
         m_numPlayers = numPlayers;
         playerList = new LinkedList<>();
         gameSrc = LoadedFrom.REG;
+        
         int i;
-        for (i = 0; i < playerTypes.length; i++) {
+        for (i = 0; i < m_numPlayers; i++) {
             if (playerTypes[i] == Player.PlayerType.COMP) {
-                playerList.add(new CompPlayer(i + 1, playerNames.get(i), m_board, gameSrc));
+                playerList.add(new CompPlayer(i + 1, m_board, gameSrc));
             } else {
-                playerList.add(new HumanPlayer(i + 1, playerNames.get(i), m_board, gameSrc));
+                playerList.add(new HumanPlayer(i + 1, m_board, gameSrc));
             }
         }
 
