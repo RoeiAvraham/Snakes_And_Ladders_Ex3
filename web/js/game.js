@@ -162,7 +162,6 @@ function ajaxJoinedPlayerList()
         url: "getjoinedplayers",
         success: function(r) {
             refreshPlayerList(r);
-
             if (r.howManyLeftToJoin == 0 && !isGameStarted)
             {
                 isGameStarted = true;
@@ -174,7 +173,7 @@ function ajaxJoinedPlayerList()
                 initComponentsForNewTurn();
                 clearInterval(getSoldierLocationOfJoinedPlayers);
             }
-            else if (isWaitingShown)
+            else if (!isWaitingShown)
             {
                 $("#gameStatus").html("Waiting for players to join...");
                 isWaitingShown = true;
@@ -194,8 +193,9 @@ function getJoinedPlayersSoldierLocation()
         dataType: "json",
         timeout: 2000,
         success: function(r) {
-            if (r.length > 0)
+            if (r.areThereNewPlayers)
             {
+                alert("there are new soldiers")
                 //draw soldiers 
             }
         }
