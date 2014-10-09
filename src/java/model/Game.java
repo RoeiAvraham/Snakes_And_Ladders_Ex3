@@ -176,14 +176,17 @@ public class Game {
 
     }
     
-    public int getPlayerIdInListByName(String playerName)
+    public int getPlayerNumByName(String playerName)
     {
         int res = 0;
         
         for (int i = 0; i < playerList.size(); i++)
         {
-            if (playerList.get(i).getPlayerName().equals(playerName))
-                res = i;
+            if (playerList.get(i).getPlayerName() != null)
+            {
+                if (playerList.get(i).getPlayerName().equals(playerName))
+                    res = playerList.get(i).getPlayerNum();
+            }
         }
         
         return res;

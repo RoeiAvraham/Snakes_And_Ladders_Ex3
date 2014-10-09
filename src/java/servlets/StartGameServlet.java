@@ -9,6 +9,8 @@ import com.google.gson.Gson;
 import exception.DuplicatePlayerNamesException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.LinkedList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -57,6 +59,9 @@ public class StartGameServlet extends HttpServlet {
                 gameManager.addGame(gameNameFromParameter, currGame);
                 request.getSession(true).setAttribute(Constants.GAME_NAME, gameNameFromParameter);
                 request.getSession().setAttribute(Constants.PLAYER_NAME, playerNameFromParameter);
+                
+                ServletUtils.addToNewlyJoinedPlayersMap(gameNameFromSession, currGame.getPlayerNumByName(playerNameFromParameter), getServletContext());
+                
                 sendDataToClient(response, Constants.GAME_HTML);
             } catch (DuplicatePlayerNamesException ex) {
                 sendDataToClient(response, Constants.PLAYER_EXISTS);

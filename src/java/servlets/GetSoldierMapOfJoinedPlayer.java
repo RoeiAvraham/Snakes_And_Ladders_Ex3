@@ -5,7 +5,6 @@
  */
 package servlets;
 
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -13,17 +12,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import model.Game;
-import model.GameManager;
-import utilities.ServletUtils;
-import utilities.SessionUtils;
 
 /**
  *
  * @author roei.avraham
  */
-@WebServlet(name = "GetCurrentPlayerServlet", urlPatterns = {"/getcurrplayer"})
-public class GetCurrentPlayerServlet extends HttpServlet {
+@WebServlet(name = "GetSoldierMapOfJoinedPlayer", urlPatterns = {"/getsoldiermap"})
+public class GetSoldierMapOfJoinedPlayer extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,19 +34,7 @@ public class GetCurrentPlayerServlet extends HttpServlet {
         response.setContentType("application/json");
         try (PrintWriter out = response.getWriter()) {
             
-            String gameNameFromSession = SessionUtils.getGameName(request);
-            GameManager gm = ServletUtils.getGameManager(getServletContext());
-            Game currGame = gm.getGames().get(gameNameFromSession);
             
-            String playerName = currGame.getCurrPlayer().getPlayerName();
-            int playerId = currGame.getPlayerIdInListByName(playerName);
-            
-            playerNameId pni = new playerNameId(playerName, playerId);
-            
-            Gson gson = new Gson();
-            String jsonResponse = gson.toJson(pni);
-            out.print(jsonResponse);
-            out.flush();
         }
     }
 
@@ -93,17 +76,5 @@ public class GetCurrentPlayerServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-    
-    class playerNameId
-    {
-        String playerName;
-        int playerId;
-        
-        public playerNameId(String playerName, int playerId)
-        {
-            this.playerName = playerName;
-            this.playerId = playerId;
-        }
-    }
 
 }

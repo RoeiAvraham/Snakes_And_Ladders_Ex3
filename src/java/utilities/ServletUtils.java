@@ -2,6 +2,7 @@ package utilities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import model.Cell;
@@ -20,6 +21,7 @@ public class ServletUtils {
 
     private static final String GAME_MANAGER_ATTRIBUTE_NAME = "gameManager";
     private static final String GAME_XML_ATTRIBUTE_NAME = "xmlGame";
+    private static final String NEWLY_JOINED_PLAYERS_MAP = "newJoinedMap";
 
     public static GameManager getGameManager(ServletContext servletContext) {
         if (servletContext.getAttribute(GAME_MANAGER_ATTRIBUTE_NAME) == null) {
@@ -36,6 +38,35 @@ public class ServletUtils {
         return (Game) servletContext.getAttribute(GAME_XML_ATTRIBUTE_NAME);
     }
 
+    private static HashMap<String, LinkedList<Integer>> getNewlyJoinedPlayers(String gameName, ServletContext servletContext) {
+        if (servletContext.getAttribute(NEWLY_JOINED_PLAYERS_MAP) == null) {
+            servletContext.setAttribute(NEWLY_JOINED_PLAYERS_MAP, new HashMap<String, LinkedList<Integer>>());
+        }
+        
+        HashMap<String, LinkedList<Integer>> newJoinedPlayers = (HashMap<String, LinkedList<Integer>>) servletContext.getAttribute(NEWLY_JOINED_PLAYERS_MAP);
+        if (newJoinedPlayers.get(gameName) == null)
+        {
+            LinkedList<Integer> list = new LinkedList<>();
+            newJoinedPlayers.put(gameName, list);
+        }
+        
+        return newJoinedPlayers;
+    }
+    
+    public static void addToNewlyJoinedPlayersMap(String gameName, Integer playerNum, ServletContext servletContext)
+    {
+        HashMap<String, LinkedList<Integer>> newJoinedPlayers = getNewlyJoinedPlayers(gameName, servletContext);   
+        newJoinedPlayers.get(gameName).add(playerNum);
+        servletContext.setAttribute(NEWLY_JOINED_PLAYERS_MAP, newJoinedPlayers);
+    }
+    
+    public static void removeFromNewlyJoinedPlayersMap(String gameName, Integer playerNum, ServletContext servletContext)
+    {
+        HashMap<String, LinkedList<Integer>> newJoinedPlayers = getNewlyJoinedPlayers(gameName, servletContext);
+        newJoinedPlayers.get(gameName).remove(playerNum);
+        servletContext.setAttribute(NEWLY_JOINED_PLAYERS_MAP, newJoinedPlayers);
+    }
+
     public static Player.PlayerType[] createPlayerTypesFromRequest(HttpServletRequest request, int numPlayers) {
         int numHumanPlayers = Integer.parseInt(request.getParameter(Constants.NUM_OF_HUMAN_PLAYERS));
         int numCompPlayers = numPlayers - numHumanPlayers;
@@ -45,9 +76,8 @@ public class ServletUtils {
         for (i = 1; i <= numCompPlayers; i++) {
             res[i] = Player.PlayerType.COMP;
         }
-        
-        for (int j = i; j < numPlayers; j++)
-        {
+
+        for (int j = i; j < numPlayers; j++) {
             res[j] = Player.PlayerType.HUMAN;
         }
         return res;
@@ -57,8 +87,7 @@ public class ServletUtils {
         Player.PlayerType[] res = new Player.PlayerType[game.getPlayerList().size()];
         int i = 0;
         for (Player p : game.getPlayerList()) {
-            if (p.isJoined())
-            {
+            if (p.isJoined()) {
                 res[i] = p.getType();
                 i++;
             }
@@ -86,8 +115,9 @@ public class ServletUtils {
         int i = 0;
 
         for (Player p : game.getPlayerList()) {
-            if (p.isJoined())
+            if (p.isJoined()) {
                 names.add(p.getPlayerName());
+            }
         }
         return names;
     }
@@ -113,7 +143,7 @@ public class ServletUtils {
                     ladderMap.put("ladder" + ladderCounter, ggis.new SnakeOrLadder(cell.getCellNum(), cell.getDest()));
                     ladderCounter++;
                 } else {
-                    snakeMap.put("snake" + snakeCounter, ggis.new  SnakeOrLadder(cell.getCellNum(),cell.getDest()));
+                    snakeMap.put("snake" + snakeCounter, ggis.new SnakeOrLadder(cell.getCellNum(), cell.getDest()));
                     snakeCounter++;
                 }
             }

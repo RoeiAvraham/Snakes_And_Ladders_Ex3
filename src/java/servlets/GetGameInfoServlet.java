@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Game;
 import model.GameManager;
-import utilities.Constants;
 import utilities.ServletUtils;
 import utilities.SessionUtils;
 
@@ -49,10 +48,6 @@ public class GetGameInfoServlet extends HttpServlet {
             ServletUtils.buildLocationMapOfLadders(this,currGame, ladderMap, snakeMap);
             
             gameInfoForUi gifu = new gameInfoForUi(currGame.getBoard().getBoardSize(), ladderMap, snakeMap);
-            
-            getServletContext().getRequestDispatcher("/getcurrPlayer").include(request, response);
-            
-            
             
             Gson gson = new Gson();
             String jsonResponse = gson.toJson(gifu);
