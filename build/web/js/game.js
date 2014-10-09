@@ -5,9 +5,15 @@
  */
 
 var refreshRate = 2000; //miliseconds
+var getSoldierLocationOfJoinedPlayers;
 var CELL_WIDTH = 86;
 var boardSize;
-var currPlayer;
+var currPlayerID;
+var currPlayerType;
+var currPlayerName;
+var diceRes;
+var isGameStarted = false;
+var isWaitingShown = false;
 
 function getGameInfo()
 {
@@ -50,6 +56,7 @@ function drawBoard(boardSize, snakeMap, ladderMap)
 
     placeSnakesAndLaddersOnBoard(snakeMap, ladderMap, boardSize);
 }
+
 
 function refreshPlayerList(r) {
     $("#playerList").empty();
@@ -155,20 +162,56 @@ function ajaxJoinedPlayerList()
         url: "getjoinedplayers",
         success: function(r) {
             refreshPlayerList(r);
+
+            if (r.howManyLeftToJoin == 0 && !isGameStarted)
+            {
+                isGameStarted = true;
+                $("#gameStatus").html("Game Started!");
+                $("#gameStatus").slideDown();
+                setTimeout(function() {
+                    $("#gameStatus").slideUp();
+                }, 2000);
+                initComponentsForNewTurn();
+                clearInterval(getSoldierLocationOfJoinedPlayers);
+            }
+            else if (isWaitingShown)
+            {
+                $("#gameStatus").html("Waiting for players to join...");
+                isWaitingShown = true;
+                $("#gameStatus").slideDown();
+            }
         }
     });
     return false;
 }
 
-
+function getJoinedPlayersSoldierLocation()
+{
+    $.ajax({
+        url: "getsoldiermap",
+        type: "GET",
+        contentType: "application/json",
+        dataType: "json",
+        timeout: 2000,
+        success: function(r) {
+            if (r.length > 0)
+            {
+                //draw soldiers 
+            }
+        }
+    });
+    return false;
+}
 
 $(function()
 {
     $.ajaxSetup({cache: false});
     setInterval(ajaxJoinedPlayerList, refreshRate);
+    getSoldierLocationOfJoinedPlayers = setInterval(getJoinedPlayersSoldierLocation, refreshRate);
     getGameInfo();
     $("#arrow").hide();
-    initComponentsForNewTurn();
+    $("#gameStatus").hide();
+    // initComponentsForNewTurn();
 });
 
 function setDiceAction() {
@@ -185,6 +228,7 @@ function setDiceAction() {
     });
 }
 
+
 function getDiceResFromServer()
 {
     $.ajax({
@@ -196,52 +240,91 @@ function getDiceResFromServer()
         success: function(r) {
             setTimeout(function() {
                 $(".dice").css('background-image', 'url(\'images/dicePics/die' + r + '.png\')');
+                diceRes = r;
                 setDiceAction();
-                
                 setSoldiersAction();
-                
+
             }, 1000);
         }
     });
     return false;
 }
 
-function setSoldiersAction()
-{   $("[class='soldier'][data-owner=1]").css("cursor","pointer");
-    $("[class='soldier'][data-owner=1]").click(function() {
-        //ajax request to play turn then move the soldier to the right cell..
-        var left, top;
-        var movingSoldier = this;
-        var currSoldierNumSoldiers = +$(this).find(".numSoldiersLabel").text();
-        if (currSoldierNumSoldiers > 1)
-        {
-            $(this).find(".numSoldiersLabel").text(+currSoldierNumSoldiers - 1);
-            var splittedSoldier = $(this).clone();
+function playTurn(soldierId) {
+    $.ajax({
+        url: "playturn",
+        type: "GET",
+        data: {soldierID: soldierId.toString(), diceRes: diceRes.toString()},
+        timeout: 2000,
+        success: function(r) {
+            moveSoldier(r, soldierId);
+
+            //if there is a winner - redirect.
+            //else- get data about the next player and set him as curr.
+        }
+    });
+    return false;
+}
+
+function moveSoldier(turnData, soldierID)
+{
+    //alert(turnData);
+    var left, top;
+    var destCell = +turnData.turnData.turnDest;
+    var clickedSoldier = $("[class='soldier'][data-id="+soldierID+"][data-cell][data-owner=1]");
+    var midDestCell = +clickedSoldier.attr('data-cell') + +turnData.turnData.turnDiceRes;
+    var movingSoldier = clickedSoldier;
+    var currSoldierNumSoldiers = +$(clickedSoldier).find(".numSoldiersLabel").text();
+    if (currSoldierNumSoldiers > 1)
+    {
+        $(clickedSoldier).find(".numSoldiersLabel").text(+currSoldierNumSoldiers - 1);
+        var splittedSoldier = $(clickedSoldier).clone();
 //            var nextFreeSoldierId = ...
 
-            movingSoldier = splittedSoldier;
-            $(movingSoldier).attr("data-id",2);
-            $(movingSoldier).find(".numSoldiersLabel").text(1);
-            $("#board").append(movingSoldier);
-        }
-        var soldierAlreadyInDestCell = $("[class='soldier'][data-cell='7'][data-owner='1']");
-        var isThereAlreadySoldierInDest = soldierAlreadyInDestCell.length;
-        
-        $(movingSoldier).attr("data-cell", 7);        
-        
+        movingSoldier = splittedSoldier;
+        $(movingSoldier).attr("data-id", 2);
+        $(movingSoldier).find(".numSoldiersLabel").text(1);
+        $("#board").append(movingSoldier);
+    }
+    if (midDestCell != turnData.turnData.turnDest)
+    {
+        left = $("#cell" + midDestCell).position().left + "px";
+        top = $("#cell" + midDestCell).position().top + "px";
         $(movingSoldier).animate({
-            left: '86px',
-            top: '-=86px'
+            left: left,
+            top: top
         });
+    }
 
-        if (isThereAlreadySoldierInDest)
-        {
-            var numSoldiersAtDestCell = +soldierAlreadyInDestCell.text().trim();
-            var numSoldiersInMovingSoldier = +$(movingSoldier).text().trim();
-            $(movingSoldier).find(".numSoldiersLabel").text(numSoldiersAtDestCell + numSoldiersInMovingSoldier);
-            soldierAlreadyInDestCell.remove();
-        }
+    var soldierAlreadyInDestCell = $("[class='soldier'][data-cell='" + turnData.turnData.turnDest + "'][data-owner='1']");
+    var isThereAlreadySoldierInDest = soldierAlreadyInDestCell.length;
 
+    $(movingSoldier).attr("data-cell", +turnData.turnData.turnDest);
+    left = $("#cell" + turnData.turnData.turnDest).position().left + "px";
+    top = $("#cell" + turnData.turnData.turnDest).position().top + "px";
+    $(movingSoldier).animate({
+        left: left,
+        top: top
+    });
+
+    if (isThereAlreadySoldierInDest)
+    {
+        var numSoldiersAtDestCell = +soldierAlreadyInDestCell.text().trim();
+        var numSoldiersInMovingSoldier = +$(movingSoldier).text().trim();
+        $(movingSoldier).find(".numSoldiersLabel").text(numSoldiersAtDestCell + numSoldiersInMovingSoldier);
+        soldierAlreadyInDestCell.remove();
+    }
+
+}
+function setSoldiersAction()
+{
+    $("[class='soldier'][data-owner=1]").css("cursor", "pointer");
+    // $("[class='soldier'][data-owner=1]").fadeOut(100).fadeIn(100);
+    $("[class='soldier'][data-owner=1]").click(function() {
+        //ajax request to play turn then move the soldier to the right cell..
+        $("[class='soldier'][data-owner=1]").css("cursor", '');
+        $("[class='soldier'][data-owner=1]").off();
+        playTurn($(this).attr('data-id'));
     });
 }
 
@@ -250,50 +333,9 @@ function initComponentsForNewTurn()
     //set player pic
     $("#arrow").show();
     setDiceAction();
-    
-    //make dice clickable- until then disabled
-    //all soldiers not clickable.
-    //add quit button ?
-    
-    
+
 }
-//$('.soldier').click( function() {
-//    
-//    if (!$(this).attr('data-owner') == currentPlayerId)
-//        return;
-//
-//});
-
-
-//function Soldier() {
-//    var myPrivateVar, myPrivateMethod;
-//    // A private counter variable
-//    myPrivateVar = 0;
-//    // A private function which logs any arguments
-//    myPrivateMethod = function( foo ) {
-//        console.log( foo );
-//    };
-//    
-//    return {
-//        // A public variable
-//        myPublicVar: "foo",
-//        // A public function utilizing privates
-//        myPublicFunction: function( bar ) {
-//        // Increment our private counter
-//        myPrivateVar++;
-//        // Call our private method using bar
-//        myPrivateMethod( bar );
-//    }
-//  };
 
 
 
-//x= new Soldier;
-//x.myPublicFunction();
 
-//function Soldier() {
-//    this. 
-//    this.owner;
-//}
-//var z = new MyClass();
-//console.log(z.y);
