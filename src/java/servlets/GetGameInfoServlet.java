@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Game;
 import model.GameManager;
+import model.Player;
+import model.Player.PlayerType;
 import utilities.ServletUtils;
 import utilities.SessionUtils;
 
@@ -47,7 +49,10 @@ public class GetGameInfoServlet extends HttpServlet {
             HashMap<String, SnakeOrLadder> snakeMap = new HashMap<>();
             ServletUtils.buildLocationMapOfLadders(this,currGame, ladderMap, snakeMap);
             
-            gameInfoForUi gifu = new gameInfoForUi(currGame.getBoard().getBoardSize(), ladderMap, snakeMap);
+            gameInfoForUi gifu = new gameInfoForUi(currGame.getBoard().getBoardSize(), ladderMap, snakeMap,
+                                                   currGame.getCurrPlayer().getPlayerNum(),
+                                                   currGame.getCurrPlayer().getPlayerName(),
+                                                   currGame.getCurrPlayer().getType());
             
             Gson gson = new Gson();
             String jsonResponse = gson.toJson(gifu);
@@ -76,12 +81,19 @@ public class GetGameInfoServlet extends HttpServlet {
         int boardSize;
         HashMap<String, SnakeOrLadder> ladderMap;
         HashMap<String, SnakeOrLadder> snakeMap;
+        int currPlayerId;
+        String currPlayerName;
+        Player.PlayerType currPlayerType;
         
-        public gameInfoForUi(int boardSize, HashMap<String, SnakeOrLadder> ladderMap, HashMap<String, SnakeOrLadder> snakeMap)
+        public gameInfoForUi(int boardSize, HashMap<String, SnakeOrLadder> ladderMap, HashMap<String, SnakeOrLadder> snakeMap,
+                             int currPlayerId, String currPlayerName, Player.PlayerType currPlayerType)
         {
             this.boardSize = boardSize;
             this.ladderMap = ladderMap;
             this.snakeMap = snakeMap;
+            this.currPlayerId = currPlayerId;
+            this.currPlayerName = currPlayerName;
+            this.currPlayerType = currPlayerType;
         }
     }
     
