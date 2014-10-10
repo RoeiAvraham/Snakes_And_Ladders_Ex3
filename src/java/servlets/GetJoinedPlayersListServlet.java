@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import model.Game;
 import model.GameManager;
 import model.Player;
+import utilities.Constants;
 import utilities.ServletUtils;
 import utilities.SessionUtils;
 
@@ -53,7 +54,18 @@ public class GetJoinedPlayersListServlet extends HttpServlet {
             
             int howManyLeftToJoin = currGame.getM_numPlayers() - currGame.getJoinedCount();
             
-            JoinedPlayerNamesTypes jpnt = new JoinedPlayerNamesTypes(playerNames,playerTypes,howManyLeftToJoin);
+            String playerNameFromSession = (String) request.getSession().getAttribute(Constants.PLAYER_NAME);
+            
+            JoinedPlayerNamesTypes jpnt;
+            
+            if (currGame.getCurrPlayer().getPlayerName().equals(playerNameFromSession))
+            {
+                jpnt = new JoinedPlayerNamesTypes(playerNames,playerTypes,howManyLeftToJoin, true);
+            }
+            else
+            {
+                jpnt = new JoinedPlayerNamesTypes(playerNames,playerTypes,howManyLeftToJoin, false);
+            }
             
             Gson gson = new Gson();
             String jsonResponse = gson.toJson(jpnt);
@@ -106,12 +118,15 @@ public class GetJoinedPlayersListServlet extends HttpServlet {
         ArrayList<String> playerNames;
         Player.PlayerType[] playerTypes;
         int howManyLeftToJoin;
+        boolean isSessionPlayerFirstPlayer;
         
-        public JoinedPlayerNamesTypes(ArrayList<String> playerNames, Player.PlayerType[] playerTypes, int howManyLeftToJoin)
+        public JoinedPlayerNamesTypes(ArrayList<String> playerNames, Player.PlayerType[] playerTypes, int howManyLeftToJoin,
+                                                                     boolean isSessionPlayerFirstPlayer)
         {
             this.playerNames = playerNames;
             this.playerTypes = playerTypes;
             this.howManyLeftToJoin = howManyLeftToJoin;
+            this.isSessionPlayerFirstPlayer = isSessionPlayerFirstPlayer;
         }
     }
 }
