@@ -195,8 +195,35 @@ function getJoinedPlayersSoldierLocation()
         success: function(r) {
             if (r.areThereNewPlayers)
             {
-                alert("there are new soldiers")
-                //draw soldiers 
+                $.each(r.soldierMap, function(index, player) {
+                    $.each(player, function(soldierIndex, soldier)
+                    {
+                        var htmlSoldier;
+                        if (soldier.playerType == "COMP")
+                        {
+                            htmlSoldier = $("#board").append('<div class="soldier" data-owner="' + index + '" data-id="' + soldier.soldierNum + '"data-cell="' + soldierIndex + '">\n\
+                                            <label class="numSoldiersLabel">' + soldier.soldierAmount + '</label>\n\
+                                            <img src ="images/computerPlayerPics/comp' + index + '.png" class="soldierPic">\n\
+                                            </div>');
+                        }
+                        else
+                        {
+                             htmlSoldier = $("#board").append('<div class="soldier" data-owner="' + index + '" data-id="' + soldier.soldierNum + '"data-cell="' + soldierIndex + '">\n\
+                                            <label class="numSoldiersLabel">' + soldier.soldierAmount + '</label>\n\
+                                            <img src ="images/humanPlayerPics/human' + index + '.png" class="soldierPic">\n\
+                                            </div>');
+                        }
+                        $(htmlSoldier).attr("left",$("#cell"+soldierIndex).position().left+"px").attr("top",$("#cell"+soldierIndex).position().top+"px");
+                        if (index==2 || index == 4)
+                        {
+                          $(htmlSoldier).attr("left", +$(htmlSoldier).attr("left")+ 37 +"px");  
+                        }
+                        if (index == 3 || index ==4)
+                        {
+                         $(htmlSoldier).attr("top", +$(htmlSoldier).attr("top")+ 46 +"px");     
+                        }
+                    });
+                });
             }
         }
     });
@@ -271,7 +298,7 @@ function moveSoldier(turnData, soldierID)
     //alert(turnData);
     var left, top;
     var destCell = +turnData.turnData.turnDest;
-    var clickedSoldier = $("[class='soldier'][data-id="+soldierID+"][data-cell][data-owner=1]");
+    var clickedSoldier = $("[class='soldier'][data-id=" + soldierID + "][data-cell][data-owner=1]");
     var midDestCell = +clickedSoldier.attr('data-cell') + +turnData.turnData.turnDiceRes;
     var movingSoldier = clickedSoldier;
     var currSoldierNumSoldiers = +$(clickedSoldier).find(".numSoldiersLabel").text();
