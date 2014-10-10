@@ -126,8 +126,8 @@ td
 }
 .soldier{
     position: absolute;
-    top:354px;
-    left:2px;
+/*    top:354px;
+    left:2px;*/
     text-align: center;
     width: 32px;
     height: 44px;
