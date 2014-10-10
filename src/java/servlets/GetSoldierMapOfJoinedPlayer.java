@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Game;
 import model.GameManager;
-import utilities.Constants;
+import model.Player;
 import utilities.ServletUtils;
 import utilities.SessionUtils;
 
@@ -122,7 +122,7 @@ public class GetSoldierMapOfJoinedPlayer extends HttpServlet {
             if (res.containsKey(soldierPos[i])) {
                 res.get(soldierPos[i]).incrementSoldierAmount();
             } else {
-                res.put(soldierPos[i], new SoldierData((i + 1), 1));
+                res.put(soldierPos[i], new SoldierData(currGame.getPlayerByNum(playerNum).getType(),(i + 1), 1));
             }
         }
 
@@ -131,10 +131,12 @@ public class GetSoldierMapOfJoinedPlayer extends HttpServlet {
 
     class SoldierData {
 
+        Player.PlayerType playerType;
         int soldierNum;
         int soldierAmount;
 
-        public SoldierData(int soldierNum, int soldierAmount) {
+        public SoldierData(Player.PlayerType playerType, int soldierNum, int soldierAmount) {
+            this.playerType = playerType;
             this.soldierNum = soldierNum;
             this.soldierAmount = soldierAmount;
         }
