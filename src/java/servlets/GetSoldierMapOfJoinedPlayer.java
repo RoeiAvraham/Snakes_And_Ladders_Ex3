@@ -45,11 +45,11 @@ public class GetSoldierMapOfJoinedPlayer extends HttpServlet {
         GameManager gameManager = ServletUtils.getGameManager(getServletContext());
 
         HashMap<String, LinkedList<Integer>> newJoinedPlayers = ServletUtils.getNewlyJoinedPlayers(gameNameFromSession, getServletContext());
-        HashMap<Integer, HashMap<Integer, SoldierData>> soldierMap = new HashMap<Integer, HashMap<Integer, SoldierData>>();
+        HashMap<Integer, HashMap<Integer, SoldierData>> soldierMap = new HashMap<>();
 
         if (newJoinedPlayers.get(gameNameFromSession).size() > 0) {
             for (Integer playerNum : newJoinedPlayers.get(gameNameFromSession)) {
-                soldierMap.put(playerNum, createSoldierMap((Integer) playerNum, gameManager.getGames().get(gameNameFromSession)));
+                soldierMap.put(playerNum, createSoldierMap(playerNum, gameManager.getGames().get(gameNameFromSession)));
             }
             for (Integer playerNum : newJoinedPlayers.get(gameNameFromSession)) {
                 ServletUtils.removeFromNewlyJoinedPlayersMap(gameNameFromSession, playerNum, getServletContext());
@@ -116,7 +116,7 @@ public class GetSoldierMapOfJoinedPlayer extends HttpServlet {
     private HashMap<Integer, SoldierData> createSoldierMap(int playerNum, Game currGame) {
 
         int[] soldierPos = currGame.getPlayerByNum(playerNum).getSoldiersPos();
-        HashMap<Integer, SoldierData> res = new HashMap<Integer, SoldierData>();
+        HashMap<Integer, SoldierData> res = new HashMap<>();
 
         for (int i = 0; i < soldierPos.length; i++) {
             if (res.containsKey(soldierPos[i])) {
