@@ -193,38 +193,42 @@ function getJoinedPlayersSoldierLocation()
         dataType: "json",
         timeout: 2000,
         success: function(r) {
-            if (r.areThereNewPlayers)
-            {
-                $.each(r.soldierMap, function(index, player) {
-                    $.each(player, function(soldierIndex, soldier)
-                    {
-                        var htmlSoldier;
-                        if (soldier.playerType == "COMP")
-                        {
-                            htmlSoldier = $("#board").append('<div class="soldier" data-owner="' + index + '" data-id="' + soldier.soldierNum + '"data-cell="' + soldierIndex + '">\n\
-                                            <label class="numSoldiersLabel">' + soldier.soldierAmount + '</label>\n\
-                                            <img src ="images/computerPlayerPics/comp' + index + '.png" class="soldierPic">\n\
-                                            </div>');
-                        }
-                        else
-                        {
-                             htmlSoldier = $("#board").append('<div class="soldier" data-owner="' + index + '" data-id="' + soldier.soldierNum + '"data-cell="' + soldierIndex + '">\n\
-                                            <label class="numSoldiersLabel">' + soldier.soldierAmount + '</label>\n\
-                                            <img src ="images/humanPlayerPics/human' + index + '.png" class="soldierPic">\n\
-                                            </div>');
-                        }
-                        $(htmlSoldier).attr("left",$("#cell"+soldierIndex).position().left+"px").attr("top",$("#cell"+soldierIndex).position().top+"px");
-                        if (index==2 || index == 4)
-                        {
-                          $(htmlSoldier).attr("left", +$(htmlSoldier).attr("left")+ 37 +"px");  
-                        }
-                        if (index == 3 || index ==4)
-                        {
-                         $(htmlSoldier).attr("top", +$(htmlSoldier).attr("top")+ 46 +"px");     
-                        }
-                    });
-                });
-            }
+//            if (r.areThereNewPlayers)
+//            {
+//                $.each(r.soldierMap, function(index, player) {
+//                    $.each(player, function(soldierIndex, soldier)
+//                    {
+//                        var htmlSoldier;
+//                        if (soldier.playerType == "COMP")
+//                        {
+//                            $("#board").append('<div class="soldier" data-owner="' + index + '" data-id="' + soldier.soldierNum + '"data-cell="' + soldierIndex + '">\n\
+//                                            <label class="numSoldiersLabel">' + soldier.soldierAmount + '</label>\n\
+//                                            <img src ="images/computerPlayerPics/comp' + index + '.png" class="soldierPic">\n\
+//                                            </div>');
+//                        }
+//                        else
+//                        {
+//                            $("#board").append('<div class="soldier" data-owner="' + index + '" data-id="' + soldier.soldierNum + '"data-cell="' + soldierIndex + '">\n\
+//                                            <label class="numSoldiersLabel">' + soldier.soldierAmount + '</label>\n\
+//                                            <img src ="images/humanPlayerPics/human' + index + '.png" class="soldierPic">\n\
+//                                            </div>');
+//                        }
+//                        htmlSoldier = $("[class='soldier'][data-owner=" + index + "][data-id=" + soldier.soldierNum + "]");
+//                        var leftOffset =0;
+//                        var topOffset =0;
+//                        if (index == 2 || index == 4)
+//                        {
+//                            leftOffset  = 37;
+//                        }
+//                        
+//                        if (index == 3 || index == 4)
+//                        {
+//                            topOffset = 46;
+//                        }
+//                        $(htmlSoldier).attr("style", "left:" + (+$("#cell" + soldierIndex).position().left + +leftOffset)+ "px ;top:" + (+$("#cell" +soldierIndex).position().top + +topOffset) + "px;");
+//                    });
+//                });
+//            }
         }
     });
     return false;
@@ -298,22 +302,32 @@ function moveSoldier(turnData, soldierID)
     //alert(turnData);
     var left, top;
     var destCell = +turnData.turnData.turnDest;
-    var clickedSoldier = $("[class='soldier'][data-id=" + soldierID + "][data-cell][data-owner=1]");
+    var clickedSoldier = $("[class='soldier'][data-id=" + soldierID + "][data-owner=1]");
     var midDestCell = +clickedSoldier.attr('data-cell') + +turnData.turnData.turnDiceRes;
     var movingSoldier = clickedSoldier;
     var currSoldierNumSoldiers = +$(clickedSoldier).find(".numSoldiersLabel").text();
     if (currSoldierNumSoldiers > 1)
     {
         $(clickedSoldier).find(".numSoldiersLabel").text(+currSoldierNumSoldiers - 1);
-        var splittedSoldier = $(clickedSoldier).clone();
-//            var nextFreeSoldierId = ...
-
-        movingSoldier = splittedSoldier;
-        $(movingSoldier).attr("data-id", 2);
+        movingSoldier = $(clickedSoldier).clone();
+        var nextFreeSoldierId =  $("[class='soldier'][data-cell="+clickedSoldier.attr('data-cell')+"]").not("[data-id="+soldierID+"]").attr('data-id');
+        if (nextFreeSoldierId == undefined)
+        {
+            if ($(clickedSoldier).attr("data-id") == 4)
+            {
+                nextFreeSoldierId = 1;
+            }
+            else
+            {
+               nextFreeSoldierId = +$(clickedSoldier).attr("data-id")+1; 
+            }            
+        }
+        $(clickedSoldier).attr("data-id",nextFreeSoldierId);
+        $(movingSoldier).attr("data-id", soldierID);
         $(movingSoldier).find(".numSoldiersLabel").text(1);
         $("#board").append(movingSoldier);
     }
-    if (midDestCell != turnData.turnData.turnDest)
+    if (midDestCell != destCell)
     {
         left = $("#cell" + midDestCell).position().left + "px";
         top = $("#cell" + midDestCell).position().top + "px";
@@ -323,10 +337,10 @@ function moveSoldier(turnData, soldierID)
         });
     }
 
-    var soldierAlreadyInDestCell = $("[class='soldier'][data-cell='" + turnData.turnData.turnDest + "'][data-owner='1']");
+    var soldierAlreadyInDestCell = $("[class='soldier'][data-cell='" + destCell + "'][data-owner='1']");
     var isThereAlreadySoldierInDest = soldierAlreadyInDestCell.length;
 
-    $(movingSoldier).attr("data-cell", +turnData.turnData.turnDest);
+    $(movingSoldier).attr("data-cell", destCell);
     left = $("#cell" + turnData.turnData.turnDest).position().left + "px";
     top = $("#cell" + turnData.turnData.turnDest).position().top + "px";
     $(movingSoldier).animate({
