@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import model.Game;
 import model.GameManager;
 import model.Player.PlayerType;
+import static model.Player.PlayerType.HUMAN;
 import model.TurnData;
 import utilities.Constants;
 import utilities.ServletUtils;
@@ -44,7 +45,16 @@ public class PlayTurnServlet extends HttpServlet {
             String gameNameFromSession = SessionUtils.getGameName(request);
             GameManager gameManager = ServletUtils.getGameManager(getServletContext());
             Game game = gameManager.getGames().get(gameNameFromSession);
-            int soldierNum = Integer.parseInt(request.getParameter(Constants.SOLDIER_ID));
+            int soldierNum;
+            if (game.getCurrPlayer().getType() == HUMAN)
+            {
+              soldierNum = Integer.parseInt(request.getParameter(Constants.SOLDIER_ID));  
+            }
+            else
+            {
+                soldierNum = game.getCurrPlayer().chooseSoldierToMove();
+            }
+             
             int diceRes = Integer.parseInt(request.getParameter(Constants.DICE_RES));
             TurnData data = game.getCurrPlayer().playTurn(soldierNum, diceRes);
             boolean isWinner = game.isWinner(game.getCurrPlayer());

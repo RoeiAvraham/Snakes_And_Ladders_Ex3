@@ -97,7 +97,7 @@ public class GetSoldierMapOfJoinedPlayer extends HttpServlet {
 
         try (PrintWriter out = response.getWriter()) {
 
-            NewPlayersSoldierMap npsm = new NewPlayersSoldierMap(areThereNewPlayers, soldierMap);
+            NewPlayersSoldierMap npsm = new NewPlayersSoldierMap(soldierMap);
 
             Gson gson = new Gson();
             String jsonResponse = gson.toJson(npsm);
@@ -141,11 +141,9 @@ public class GetSoldierMapOfJoinedPlayer extends HttpServlet {
 
     class NewPlayersSoldierMap {
 
-        boolean areThereNewPlayers;
         HashMap<Integer, HashMap<Integer, SoldierData>> soldierMap;
 
-        public NewPlayersSoldierMap(boolean areThereNewSoldiers, HashMap<Integer, HashMap<Integer, SoldierData>> soldierMap) {
-            this.areThereNewPlayers = areThereNewSoldiers;
+        public NewPlayersSoldierMap(HashMap<Integer, HashMap<Integer, SoldierData>> soldierMap) {
             this.soldierMap = soldierMap;
         }
     }
