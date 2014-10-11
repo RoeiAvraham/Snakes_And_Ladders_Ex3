@@ -2,7 +2,6 @@ package utilities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import model.Cell;
@@ -21,6 +20,7 @@ public class ServletUtils {
 
     private static final String GAME_MANAGER_ATTRIBUTE_NAME = "gameManager";
     private static final String GAME_XML_ATTRIBUTE_NAME = "xmlGame";
+    private static final String HAS_TURN_PASSED = "hasTurnPassed";
 
     public static GameManager getGameManager(ServletContext servletContext) {
         if (servletContext.getAttribute(GAME_MANAGER_ATTRIBUTE_NAME) == null) {
@@ -35,6 +35,16 @@ public class ServletUtils {
 
     public static Game getXmlGameFromServletContext(ServletContext servletContext) {
         return (Game) servletContext.getAttribute(GAME_XML_ATTRIBUTE_NAME);
+    }
+    
+    public static boolean getHasTurnPassed(ServletContext servletContext)
+    {
+        return (boolean) servletContext.getAttribute(HAS_TURN_PASSED);
+    }
+    
+    public static void setHasTurnPassed(boolean hasTurnPassed, ServletContext servletContext)
+    {
+        servletContext.setAttribute(HAS_TURN_PASSED, hasTurnPassed);
     }
     
     public static Player.PlayerType[] createPlayerTypesFromRequest(HttpServletRequest request, int numPlayers) {
