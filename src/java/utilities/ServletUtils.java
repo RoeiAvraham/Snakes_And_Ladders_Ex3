@@ -21,7 +21,6 @@ public class ServletUtils {
 
     private static final String GAME_MANAGER_ATTRIBUTE_NAME = "gameManager";
     private static final String GAME_XML_ATTRIBUTE_NAME = "xmlGame";
-    private static final String NEWLY_JOINED_PLAYERS_MAP = "newJoinedMap";
 
     public static GameManager getGameManager(ServletContext servletContext) {
         if (servletContext.getAttribute(GAME_MANAGER_ATTRIBUTE_NAME) == null) {
@@ -37,47 +36,7 @@ public class ServletUtils {
     public static Game getXmlGameFromServletContext(ServletContext servletContext) {
         return (Game) servletContext.getAttribute(GAME_XML_ATTRIBUTE_NAME);
     }
-
-    public static HashMap<String, LinkedList<Integer>> getNewlyJoinedPlayers(String gameName, ServletContext servletContext) {
-        if (servletContext.getAttribute(NEWLY_JOINED_PLAYERS_MAP) == null) {
-            servletContext.setAttribute(NEWLY_JOINED_PLAYERS_MAP, new HashMap<String, LinkedList<Integer>>());
-        }
-        
-        HashMap<String, LinkedList<Integer>> newJoinedPlayers = (HashMap<String, LinkedList<Integer>>) servletContext.getAttribute(NEWLY_JOINED_PLAYERS_MAP);
-        if (newJoinedPlayers.get(gameName) == null)
-        {
-            LinkedList<Integer> list = new LinkedList<>();
-            newJoinedPlayers.put(gameName, list);
-        }
-        
-        return newJoinedPlayers;
-    }
     
-    public static void addPlayerToNewlyJoinedPlayersMap(String gameName, Integer playerNum, ServletContext servletContext)
-    {
-        HashMap<String, LinkedList<Integer>> newJoinedPlayers = getNewlyJoinedPlayers(gameName, servletContext);   
-        newJoinedPlayers.get(gameName).add(playerNum);
-        servletContext.setAttribute(NEWLY_JOINED_PLAYERS_MAP, newJoinedPlayers);
-    }
-    
-    public static void removeFromNewlyJoinedPlayersMap(String gameName, Integer playerNum, ServletContext servletContext)
-    {
-        HashMap<String, LinkedList<Integer>> newJoinedPlayers = getNewlyJoinedPlayers(gameName, servletContext);
-        newJoinedPlayers.get(gameName).remove(playerNum);
-        servletContext.setAttribute(NEWLY_JOINED_PLAYERS_MAP, newJoinedPlayers);
-    }
-    
-    public static void addNewPlayersToJoinedPlayersMap(String gameName, ServletContext servletContext)
-    {
-        for (Player p : getGameManager(servletContext).getGames().get(gameName).getPlayerList())
-        {
-            if (p.isJoined())
-            {
-                addPlayerToNewlyJoinedPlayersMap(gameName, p.getPlayerNum(),servletContext);
-            }
-        }
-    }
-
     public static Player.PlayerType[] createPlayerTypesFromRequest(HttpServletRequest request, int numPlayers) {
         int numHumanPlayers = Integer.parseInt(request.getParameter(Constants.NUM_OF_HUMAN_PLAYERS));
         int numCompPlayers = numPlayers - numHumanPlayers;

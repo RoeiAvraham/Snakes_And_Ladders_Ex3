@@ -27,7 +27,7 @@ import utilities.SessionUtils;
 public class PlayerQuitServlet extends HttpServlet {
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>  
      * methods.
      *
      * @param request servlet request
