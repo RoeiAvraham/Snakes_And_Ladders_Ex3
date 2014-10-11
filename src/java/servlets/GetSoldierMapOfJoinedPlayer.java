@@ -9,7 +9,6 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.LinkedList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -43,24 +42,18 @@ public class GetSoldierMapOfJoinedPlayer extends HttpServlet {
 
         String gameNameFromSession = SessionUtils.getGameName(request);
         GameManager gameManager = ServletUtils.getGameManager(getServletContext());
+        Game currGame = gameManager.getGames().get(gameNameFromSession);
 
-        HashMap<String, LinkedList<Integer>> newJoinedPlayers = ServletUtils.getNewlyJoinedPlayers(gameNameFromSession, getServletContext());
-        HashMap<Integer, HashMap<Integer, SoldierData>> soldierMap = new HashMap<Integer, HashMap<Integer, SoldierData>>();
+        HashMap<Integer, HashMap<Integer, SoldierData>> soldierMap = new HashMap<>();
 
-        if (newJoinedPlayers.get(gameNameFromSession).size() > 0) {
-            for (Integer playerNum : newJoinedPlayers.get(gameNameFromSession)) {
-                soldierMap.put(playerNum, createSoldierMap((Integer) playerNum, gameManager.getGames().get(gameNameFromSession)));
-            }
-            for (Integer playerNum : newJoinedPlayers.get(gameNameFromSession)) {
-                ServletUtils.removeFromNewlyJoinedPlayersMap(gameNameFromSession, playerNum, getServletContext());
-            }
-            sendDataToClient(response, true, soldierMap);
-        } else {
-            sendDataToClient(response, false, null);
+        for (Player p : currGame.getPlayerList()) {
+            soldierMap.put(p.getPlayerNum(), createSoldierMap(p.getPlayerNum(), gameManager.getGames().get(gameNameFromSession)));
         }
+
+        sendDataToClient(response, true, soldierMap);
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -116,13 +109,13 @@ public class GetSoldierMapOfJoinedPlayer extends HttpServlet {
     private HashMap<Integer, SoldierData> createSoldierMap(int playerNum, Game currGame) {
 
         int[] soldierPos = currGame.getPlayerByNum(playerNum).getSoldiersPos();
-        HashMap<Integer, SoldierData> res = new HashMap<Integer, SoldierData>();
+        HashMap<Integer, SoldierData> res = new HashMap<>();
 
         for (int i = 0; i < soldierPos.length; i++) {
             if (res.containsKey(soldierPos[i])) {
                 res.get(soldierPos[i]).incrementSoldierAmount();
             } else {
-                res.put(soldierPos[i], new SoldierData(currGame.getPlayerByNum(playerNum).getType(),(i + 1), 1));
+                res.put(soldierPos[i], new SoldierData(currGame.getPlayerByNum(playerNum).getType(), (i + 1), 1));
             }
         }
 
