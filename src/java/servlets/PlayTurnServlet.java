@@ -62,33 +62,35 @@ public class PlayTurnServlet extends HttpServlet {
             String newCurrPlayerName = game.getCurrPlayer().getPlayerName();
             int newCurrPlayerID = game.getCurrPlayer().getPlayerNum();
             PlayerType newCurrPlayerType = game.getCurrPlayer().getType();
-            
+
+            TurnInfo ti = new TurnInfo(data, newCurrPlayerName, newCurrPlayerID, newCurrPlayerType, isWinner);
+
             Gson gson = new Gson();
-            TurnInfo ti= new TurnInfo(data, newCurrPlayerName, newCurrPlayerID, newCurrPlayerType, isWinner);
             String jsonResponse = gson.toJson(ti);
             out.print(jsonResponse);
             out.flush();
         }
     }
 
-    class TurnInfo
-    {
+    class TurnInfo {
+
         TurnData turnData;
         String newCurrPlayerName;
         int newCurrPlayerID;
         PlayerType newCurrPlayerType;
         boolean isThereWinner;
-        
-        public TurnInfo(TurnData td, String newCurrPlayerName, int newCurrPlayerID, PlayerType newCurrPlayerType, boolean isWinner)
-        {
-          turnData=td;
-          this.newCurrPlayerName = newCurrPlayerName;
-          this.newCurrPlayerID=newCurrPlayerID;
-          this.newCurrPlayerType = newCurrPlayerType;
-          isThereWinner = isWinner;
+
+        public TurnInfo(TurnData td, String newCurrPlayerName, int newCurrPlayerID, PlayerType newCurrPlayerType, boolean isWinner) {
+            turnData = td;
+            this.newCurrPlayerName = newCurrPlayerName;
+            this.newCurrPlayerID = newCurrPlayerID;
+            this.newCurrPlayerType = newCurrPlayerType;
+            isThereWinner = isWinner;
         }
     }
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+
     /**
      * Handles the HTTP <code>GET</code> method.
      *

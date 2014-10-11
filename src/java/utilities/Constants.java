@@ -30,3 +30,4 @@ public class Constants {
     
     public static final String GAME_HTML = "game.html";
 }
+    
