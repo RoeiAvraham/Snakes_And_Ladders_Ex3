@@ -5,7 +5,6 @@
  */
 
 var refreshRate = 2000; //miliseconds
-var getSoldierLocationOfJoinedPlayers;
 var CELL_WIDTH = 86;
 var boardSize;
 var currPlayerID;
@@ -175,16 +174,13 @@ function ajaxJoinedPlayerList()
                     $("#gameStatus").slideUp();
                 }, 2000);
                 getJoinedPlayersSoldierLocation();
+                setInterval(requestLastTurnData,1000);
                 if (r.isSessionPlayerFirstPlayer)
                 {
+                    isItMyTurn = true;
                     initComponentsForNewTurn();
                 }
-                else if (currPlayerType == "COMP")
-                {
-                    setTimeout(function() {
-                        playCompTurn();
-                    }, 1500);
-                }
+                //setIntervalForRequest....each second
             }
             else if (!isWaitingShown)
             {
@@ -197,11 +193,67 @@ function ajaxJoinedPlayerList()
     return false;
 }
 
-function playCompTurn()
+//fix
+//function playCompTurn()
+//{
+//    getDiceResFromServer();
+//    var soldierId = 0;
+//    playTurn(soldierId);
+//}
+
+//fix - add request fir each second 
+function requestLastTurnData()
 {
-    getDiceResFromServer();
-    var soldierId = 0;
-    playTurn(soldierId);
+    if (isItMyTurn){
+    $.ajax({
+        url: "lastturn",
+        type: "GET",
+        contentType: "application/json",
+        dataType: "json",
+        timeout: 2000,
+        success: function(r) {
+
+            showOtherPlayerTurn(r);
+
+            if (r.isThereWinner)
+            {
+                //redirect
+                alert(currPlayerName + "won");
+            }
+            else
+            {
+                currPlayerID = r.newCurrPlayerID;
+                currPlayerName = r.newCurrPlayerName;
+                currPlayerType = r.newCurrPlayerType;
+                versionID = r.versionID;
+            }
+            if (r.isItPlayerSessionTurn)
+            {
+                isItMyTurn = true;
+                initComponentsForNewTurn();
+            }
+            else
+            {
+                isItMyTurn = false;
+            }
+        }
+    });
+    return false;
+    }
+}
+
+function showOtherPlayerTurn(r)
+{
+    var audio = document.getElementById("diceSound");
+    audio.play();
+    setTimeout(function() {
+        $(".dice").css('background-image', 'url(\'images/dicePics/die' + r + '.png\')');
+        diceRes = r;
+    }, 1000);
+    $(this).css('background-image', 'url(\'images/dicePics/rolling_dice.gif\')');
+    setTimeout(function() {
+        moveSoldier(r, r.turnData.turnSoldierNum);
+    }, 1000);
 }
 function getJoinedPlayersSoldierLocation()
 {
@@ -257,13 +309,11 @@ $(function()
     getGameInfo();
     $("#arrow").hide();
     $("#gameStatus").hide();
-    // initComponentsForNewTurn();
 });
 
 function setDiceAction() {
     $(".dice").css("cursor", "pointer");
     $('.dice').click(function() {
-        var dice = this;
         $("#arrow").hide();
         var audio = document.getElementById("diceSound");
         audio.play();
@@ -303,7 +353,7 @@ function playTurn(soldierId) {
     $.ajax({
         url: "playturn",
         type: "GET",
-        data: {soldierID: soldierId.toString(), diceRes: diceRes.toString()},
+        data: {soldierID: soldierId.toString(), diceRes: diceRes.toString(), versionID: versionID.toString()},
         timeout: 2000,
         success: function(r) {
             moveSoldier(r, soldierId);
@@ -317,6 +367,12 @@ function playTurn(soldierId) {
                 currPlayerID = r.newCurrPlayerID;
                 currPlayerType = r.newCurrPlayerType;
                 currPlayerName = r.newCurrPlayerName;
+                isItMyTurn = false;
+                versionID= r.versionID;
+                if (r.newCurrPlayerType == "COMP")
+                {
+                    playTurn(0, 0);
+                }
             }
         }
     });

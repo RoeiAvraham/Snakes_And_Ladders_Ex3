@@ -25,7 +25,7 @@ import utilities.SessionUtils;
  * @author roei.avraham
  */
 @WebServlet(name = "GetSoldierMapOfJoinedPlayer", urlPatterns = {"/getsoldiermap"})
-public class GetSoldierMapOfJoinedPlayer extends HttpServlet {
+public class GetSoldierMap extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

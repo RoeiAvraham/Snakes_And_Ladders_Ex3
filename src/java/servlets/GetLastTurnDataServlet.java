@@ -13,11 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import model.Game;
-import model.GameManager;
-import model.Player.PlayerType;
 import static model.Player.PlayerType.HUMAN;
-import model.TurnData;
 import utilities.Constants;
 import utilities.ServletUtils;
 import utilities.SessionUtils;
@@ -27,8 +23,8 @@ import utilities.TurnInfo;
  *
  * @author Anat
  */
-@WebServlet(name = "PlayTurnServlet", urlPatterns = {"/playturn"})
-public class PlayTurnServlet extends HttpServlet {
+@WebServlet(name = "GetLastTurnDataServlet", urlPatterns = {"/lastturn"})
+public class GetLastTurnDataServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,39 +40,31 @@ public class PlayTurnServlet extends HttpServlet {
         response.setContentType("application/json");
         try (PrintWriter out = response.getWriter()) {
             String gameNameFromSession = SessionUtils.getGameName(request);
-            GameManager gameManager = ServletUtils.getGameManager(getServletContext());
-            Game game = gameManager.getGames().get(gameNameFromSession);
-            int soldierNum, diceRes;
 
-            if (game.getCurrPlayer().getType() == HUMAN) {
-                soldierNum = Integer.parseInt(request.getParameter(Constants.SOLDIER_ID));
-                diceRes = Integer.parseInt(request.getParameter(Constants.DICE_RES));
-            } else//computer
-            {
-                diceRes = game.getCurrPlayer().throwDice();
-                soldierNum = game.getCurrPlayer().chooseSoldierToMove();
+            Integer serverVersionID = ServletUtils.getTurnInfoFromServletContext(gameNameFromSession, getServletContext()).getVersionId();
+            Integer clientVersionID = Integer.parseInt(request.getParameter(Constants.VERSION_ID));
+            String playerNameFromSession = (String) request.getSession().getAttribute(Constants.PLAYER_NAME);
+            Gson gson = new Gson();
+            String jsonResponse;
+            if (clientVersionID < serverVersionID) {
+                TurnInfo ti = ServletUtils.getTurnInfoFromServletContext(gameNameFromSession, getServletContext());
+
+                if (ti.getNextPlayerType() == HUMAN) {
+                    if (playerNameFromSession.equals(ti.getNextPlayerName())) {
+                        ti.setIsPlayerSessionTurn(true);
+                    } else {
+                        ti.setIsPlayerSessionTurn(false);
+                    }
+                    jsonResponse = gson.toJson(ti);
+
+                } else {
+                    jsonResponse = gson.toJson(serverVersionID);
+                }
+                out.print(jsonResponse);
+                out.flush();
             }
-
-            String playerName = game.getCurrPlayer().getPlayerName();
-            PlayerType playerType = game.getCurrPlayer().getType();
-            int playerID = game.getCurrPlayer().getPlayerNum();
-            TurnData data = game.getCurrPlayer().playTurn(soldierNum, diceRes);
-            boolean isWinner = game.isWinner(game.getCurrPlayer());
-
-            game.advanceTurnToNextPlayer();
-
-            String newCurrPlayerName = game.getCurrPlayer().getPlayerName();
-            int newCurrPlayerID = game.getCurrPlayer().getPlayerNum();
-            PlayerType newCurrPlayerType = game.getCurrPlayer().getType();
-
-            int currVersion = ServletUtils.getTurnInfoFromServletContext(gameNameFromSession, getServletContext()).getVersionId();
-            TurnInfo ti = new TurnInfo(playerName, playerType, playerID, data, newCurrPlayerName, newCurrPlayerID, newCurrPlayerType, isWinner);
-
-            ti.setVersionId(currVersion + 1);
-            int clientVersionID = Integer.parseInt(request.getParameter(Constants.VERSION_ID));
-            ServletUtils.SetTurnInfoInServletContext(gameNameFromSession, ti, getServletContext());
-            getServletContext().getRequestDispatcher("/lastturn?" + Constants.VERSION_ID + "=" + clientVersionID).forward(request, response);
         }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

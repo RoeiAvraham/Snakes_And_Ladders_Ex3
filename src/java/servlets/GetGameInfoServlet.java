@@ -17,9 +17,10 @@ import javax.servlet.http.HttpServletResponse;
 import model.Game;
 import model.GameManager;
 import model.Player;
-import model.Player.PlayerType;
 import utilities.ServletUtils;
 import utilities.SessionUtils;
+import utilities.TurnInfo;
+import utilities.TurnInfoMap;
 
 /**
  *
@@ -40,7 +41,7 @@ public class GetGameInfoServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
-        try (PrintWriter out = response.getWriter()) {
+        
             String gameNameFromSession = SessionUtils.getGameName(request);
             GameManager gm = ServletUtils.getGameManager(getServletContext());
             Game currGame = gm.getGames().get(gameNameFromSession);     
@@ -49,10 +50,19 @@ public class GetGameInfoServlet extends HttpServlet {
             HashMap<String, SnakeOrLadder> snakeMap = new HashMap<>();
             ServletUtils.buildLocationMapOfLadders(this,currGame, ladderMap, snakeMap);
             
+            TurnInfoMap turnInfoMap = ServletUtils.getTurnInfoMap(getServletContext());
+            if (turnInfoMap.getTurnInfo(gameNameFromSession) == null)
+            {
+                ServletUtils su = new ServletUtils();
+                turnInfoMap.putTurnInfo(gameNameFromSession, new TurnInfo(null,null,null,null,null,null,null,false));
+            }
+            turnInfoMap.getTurnInfo(gameNameFromSession).setVersionId(0);
+            
             gameInfoForUi gifu = new gameInfoForUi(currGame.getBoard().getBoardSize(), ladderMap, snakeMap,
                                                    currGame.getCurrPlayer().getPlayerNum(),
                                                    currGame.getCurrPlayer().getPlayerName(),
                                                    currGame.getCurrPlayer().getType());
+            try (PrintWriter out = response.getWriter()) {
             
             Gson gson = new Gson();
             String jsonResponse = gson.toJson(gifu);
