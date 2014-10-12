@@ -25,7 +25,6 @@ import model.TurnData;
         Player.PlayerType newCurrPlayerType;
         boolean isThereWinner;
         boolean isItPlayerSessionTurn;
-        boolean isChosenToRunCompPlayerTurn; 
 
         public TurnInfo(String currPlayerName, Player.PlayerType currPlayerType, Integer currPlayerID,
                 TurnData td, String newCurrPlayerName, Integer newCurrPlayerID, Player.PlayerType newCurrPlayerType,
@@ -38,7 +37,6 @@ import model.TurnData;
             this.newCurrPlayerID = newCurrPlayerID;
             this.newCurrPlayerType = newCurrPlayerType;
             isThereWinner = isWinner;
-            this.isItPlayerSessionTurn = false;
         }
 
         public int getVersionId() {

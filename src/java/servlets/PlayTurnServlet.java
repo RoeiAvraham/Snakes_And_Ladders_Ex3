@@ -5,7 +5,7 @@
  */
 package servlets;
 
-import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -73,9 +73,9 @@ public class PlayTurnServlet extends HttpServlet {
             TurnInfo ti = new TurnInfo(playerName, playerType, playerID, data, newCurrPlayerName, newCurrPlayerID, newCurrPlayerType, isWinner);
 
             ti.setVersionId(currVersion + 1);
-            int clientVersionID = Integer.parseInt(request.getParameter(Constants.VERSION_ID));
+            int clientVersionID = Integer.parseInt(request.getParameter("versionID"));
             ServletUtils.SetTurnInfoInServletContext(gameNameFromSession, ti, getServletContext());
-            getServletContext().getRequestDispatcher("/lastturn?" + Constants.VERSION_ID + "=" + clientVersionID).forward(request, response);
+            getServletContext().getRequestDispatcher("/lastturn?" + "versionID" + "=" + clientVersionID).forward(request, response);
         }
     }
 

@@ -15,6 +15,7 @@ var isGameStarted = false;
 var isWaitingShown = false;
 var versionID = 0;
 var isItMyTurn = false;
+var isFirstCall = true;
 
 function getGameInfo()
 {
@@ -172,9 +173,10 @@ function ajaxJoinedPlayerList()
                 $("#gameStatus").slideDown();
                 setTimeout(function() {
                     $("#gameStatus").slideUp();
+                   
                 }, 2000);
                 getJoinedPlayersSoldierLocation();
-                setInterval(requestLastTurnData,1000);
+                setInterval(requestLastTurnData, 1000);
                 if (r.isSessionPlayerFirstPlayer)
                 {
                     isItMyTurn = true;
@@ -182,12 +184,13 @@ function ajaxJoinedPlayerList()
                 }
                 //setIntervalForRequest....each second
             }
-            else if (!isWaitingShown)
-            {
+            else if (!isWaitingShown && !isGameStarted)
+            {           
                 $("#gameStatus").html("Waiting for players to join...");
                 isWaitingShown = true;
                 $("#gameStatus").slideDown();
             }
+            
         }
     });
     return false;
@@ -204,41 +207,48 @@ function ajaxJoinedPlayerList()
 //fix - add request fir each second 
 function requestLastTurnData()
 {
-    if (isItMyTurn){
-    $.ajax({
-        url: "lastturn",
-        type: "GET",
-        contentType: "application/json",
-        dataType: "json",
-        timeout: 2000,
-        success: function(r) {
+    if (!isItMyTurn) {
+        $.ajax({
+            url: "lastturn",
+            type: "GET",
+            data: {versionID: versionID.toString()},
+            contentType: "application/json",
+            dataType: "json",
+            timeout: 2000,
+            success: function(r) {
 
-            showOtherPlayerTurn(r);
+                showOtherPlayerTurn(r);
 
-            if (r.isThereWinner)
-            {
-                //redirect
-                alert(currPlayerName + "won");
+                if (r.isThereWinner)
+                {
+                    //redirect
+                    isItMyTurn = true;
+                    setTimeout(function() {
+                        alert(r.currPlayerName + "won");
+                    }, 2500);
+
+                }
+                else
+                {
+                    currPlayerID = r.newCurrPlayerID;
+                    currPlayerName = r.newCurrPlayerName;
+                    currPlayerType = r.newCurrPlayerType;
+                    versionID = r.versionID;
+                }
+                if (r.isItPlayerSessionTurn)
+                {
+                    setTimeout(function() {
+                        isItMyTurn = true;
+                        initComponentsForNewTurn();
+                    }, 2500);
+                }
+                else
+                {
+                    isItMyTurn = false;
+                }
             }
-            else
-            {
-                currPlayerID = r.newCurrPlayerID;
-                currPlayerName = r.newCurrPlayerName;
-                currPlayerType = r.newCurrPlayerType;
-                versionID = r.versionID;
-            }
-            if (r.isItPlayerSessionTurn)
-            {
-                isItMyTurn = true;
-                initComponentsForNewTurn();
-            }
-            else
-            {
-                isItMyTurn = false;
-            }
-        }
-    });
-    return false;
+        });
+        return false;
     }
 }
 
@@ -246,14 +256,14 @@ function showOtherPlayerTurn(r)
 {
     var audio = document.getElementById("diceSound");
     audio.play();
+    diceRes = r.turnData.turnDiceRes;
     setTimeout(function() {
-        $(".dice").css('background-image', 'url(\'images/dicePics/die' + r + '.png\')');
-        diceRes = r;
+        $(".dice").css('background-image', 'url(\'images/dicePics/die' + diceRes + '.png\')');
+        setTimeout(function() {
+            moveSoldier(r, r.turnData.turnSoldierNum);
+        }, 1000);
     }, 1000);
-    $(this).css('background-image', 'url(\'images/dicePics/rolling_dice.gif\')');
-    setTimeout(function() {
-        moveSoldier(r, r.turnData.turnSoldierNum);
-    }, 1000);
+    $(".dice").css('background-image', 'url(\'images/dicePics/rolling_dice.gif\')');
 }
 function getJoinedPlayersSoldierLocation()
 {
@@ -313,14 +323,17 @@ $(function()
 
 function setDiceAction() {
     $(".dice").css("cursor", "pointer");
+    $(".dice").css('background-image', 'url(\'images/dicePics/staticDic.png\')');
+
     $('.dice').click(function() {
         $("#arrow").hide();
+        $(this).css('cursor', 'context-menu');
         var audio = document.getElementById("diceSound");
         audio.play();
-        getDiceResFromServer();
         $(this).off();
         $(this).css('background-image', 'url(\'images/dicePics/rolling_dice.gif\')');
         $(this).css('cursor', 'arrow');
+        getDiceResFromServer();
         return false;
     });
 }
@@ -338,7 +351,6 @@ function getDiceResFromServer()
             setTimeout(function() {
                 $(".dice").css('background-image', 'url(\'images/dicePics/die' + r + '.png\')');
                 diceRes = r;
-                setDiceAction();
                 if (currPlayerType == "HUMAN")
                 {
                     setSoldiersAction();
@@ -356,23 +368,27 @@ function playTurn(soldierId) {
         data: {soldierID: soldierId.toString(), diceRes: diceRes.toString(), versionID: versionID.toString()},
         timeout: 2000,
         success: function(r) {
-            moveSoldier(r, soldierId);
-            if (r.isThereWinner)
+            if (r.currPlayerType == "HUMAN")
             {
-                //redirect
-                alert(currPlayerName + " won!");
-            }
-            else
-            {
+                moveSoldier(r, soldierId);
+                if (r.isThereWinner)
+                {
+                    //redirect
+                    setTimeout(function() {
+                        alert(r.currPlayerName + " won!");
+                    }, 1500);
+
+                }
                 currPlayerID = r.newCurrPlayerID;
                 currPlayerType = r.newCurrPlayerType;
                 currPlayerName = r.newCurrPlayerName;
                 isItMyTurn = false;
-                versionID= r.versionID;
-                if (r.newCurrPlayerType == "COMP")
-                {
-                    playTurn(0, 0);
-                }
+                versionID = r.versionID;
+            }
+
+            if (r.newCurrPlayerType == "COMP" && !r.isThereWinner)
+            {
+                playTurn(0, 0);
             }
         }
     });
@@ -384,7 +400,11 @@ function moveSoldier(turnData, soldierID)
     //alert(turnData);
     var left, top;
     var destCell = +turnData.turnData.turnDest;
-    var clickedSoldier = $("[class='soldier'][data-id=" + soldierID + "][data-owner=" + currPlayerID + "]");
+    var clickedSoldier = $("[class='soldier'][data-id=" + soldierID + "][data-owner=" + turnData.currPlayerID + "]");
+    if (clickedSoldier.length == 0)
+    {
+        clickedSoldier = $("[class='soldier'][data-owner=" + turnData.currPlayerID + "][data-cell=" + turnData.turnData.sourceCell + "]");
+    }
     var midDestCell = +clickedSoldier.attr('data-cell') + +turnData.turnData.turnDiceRes;
     var movingSoldier = clickedSoldier;
     var currSoldierNumSoldiers = +$(clickedSoldier).find(".numSoldiersLabel").text();
@@ -392,7 +412,7 @@ function moveSoldier(turnData, soldierID)
     {
         $(clickedSoldier).find(".numSoldiersLabel").text(+currSoldierNumSoldiers - 1);
         movingSoldier = $(clickedSoldier).clone();
-        var nextFreeSoldierId = $("[class='soldier'][data-cell=" + clickedSoldier.attr('data-cell') + "] [data-owner=" + currPlayerID + "]").not("[data-id=" + soldierID + "]").attr('data-id');
+        var nextFreeSoldierId = $("[class='soldier'][data-cell=" + clickedSoldier.attr('data-cell') + "] [data-owner=" + turnData.currPlayerID + "]").not("[data-id=" + soldierID + "]").attr('data-id');
         if (nextFreeSoldierId == undefined)
         {
             if ($(clickedSoldier).attr("data-id") == 4)
@@ -419,7 +439,7 @@ function moveSoldier(turnData, soldierID)
         });
     }
 
-    var soldierAlreadyInDestCell = $("[class='soldier'][data-cell='" + destCell + "'][data-owner=" + currPlayerID + "]");
+    var soldierAlreadyInDestCell = $("[class='soldier'][data-cell='" + destCell + "'][data-owner=" + turnData.currPlayerID + "]");
     var isThereAlreadySoldierInDest = soldierAlreadyInDestCell.length;
 
     $(movingSoldier).attr("data-cell", destCell);
@@ -457,7 +477,3 @@ function initComponentsForNewTurn()
     $("#arrow").show();
     setDiceAction();
 }
-
-
-
-

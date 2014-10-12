@@ -42,27 +42,29 @@ public class GetLastTurnDataServlet extends HttpServlet {
             String gameNameFromSession = SessionUtils.getGameName(request);
 
             Integer serverVersionID = ServletUtils.getTurnInfoFromServletContext(gameNameFromSession, getServletContext()).getVersionId();
-            Integer clientVersionID = Integer.parseInt(request.getParameter(Constants.VERSION_ID));
-            String playerNameFromSession = (String) request.getSession().getAttribute(Constants.PLAYER_NAME);
+            Integer clientVersionID = Integer.parseInt(request.getParameter("versionID"));
+            String playerNameFromSession = (String) request.getSession().getAttribute("playerName");
             Gson gson = new Gson();
             String jsonResponse;
             if (clientVersionID < serverVersionID) {
                 TurnInfo ti = ServletUtils.getTurnInfoFromServletContext(gameNameFromSession, getServletContext());
 
-                if (ti.getNextPlayerType() == HUMAN) {
-                    if (playerNameFromSession.equals(ti.getNextPlayerName())) {
-                        ti.setIsPlayerSessionTurn(true);
-                    } else {
-                        ti.setIsPlayerSessionTurn(false);
-                    }
-                    jsonResponse = gson.toJson(ti);
-
+//                if (ti.getNextPlayerType() == HUMAN) {
+                if (playerNameFromSession.equals(ti.getNextPlayerName())) {
+                    ti.setIsPlayerSessionTurn(true);
                 } else {
-                    jsonResponse = gson.toJson(serverVersionID);
+                    ti.setIsPlayerSessionTurn(false);
                 }
-                out.print(jsonResponse);
-                out.flush();
+                jsonResponse = gson.toJson(ti);
+
+//                } else {
+//                    jsonResponse = gson.toJson(serverVersionID);
+//                }
+            } else {
+                jsonResponse = "{versionID:"+clientVersionID+"}";
             }
+            out.print(jsonResponse);
+            out.flush();
         }
 
     }

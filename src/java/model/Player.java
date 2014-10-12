@@ -125,12 +125,12 @@ public abstract class Player {
     public TurnData move(final int soldierNum, int diceRes) {
         //int diceRes = throwDice();
         int destCell = calcDestCellNum(diceRes, soldierNum);
-
+        int sourceCell = m_board.getCell(m_soldiersPos[soldierNum - 1]).getCellNum();
         m_board.getCell(m_soldiersPos[soldierNum - 1]).removeSoldier(m_playerNum);
         m_board.getCell(destCell).insertSoldier(m_playerNum);
         m_soldiersPos[soldierNum - 1] = destCell;
 
-        return (new TurnData(diceRes, soldierNum, destCell));
+        return (new TurnData(diceRes, soldierNum, destCell, sourceCell));
     }
 
     public abstract PlayerType getType();

@@ -13,11 +13,13 @@ public class TurnData {
     private int turnDiceRes;
     private int turnSoldierNum;
     private int turnDest;
+    private int sourceCell;
 
-    public TurnData(int diceRes, int soldierNum, int cellDest) {
+    public TurnData(int diceRes, int soldierNum, int cellDest, int sourceCell) {
         turnDiceRes = diceRes;
         turnSoldierNum = soldierNum;
         turnDest = cellDest;
+        this.sourceCell = sourceCell;
     }
 
     /**
