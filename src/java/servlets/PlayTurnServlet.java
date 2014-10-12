@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Game;
 import model.GameManager;
+import model.Player;
 import model.Player.PlayerType;
 import static model.Player.PlayerType.HUMAN;
 import model.TurnData;
@@ -60,17 +61,21 @@ public class PlayTurnServlet extends HttpServlet {
             String playerName = game.getCurrPlayer().getPlayerName();
             PlayerType playerType = game.getCurrPlayer().getType();
             int playerID = game.getCurrPlayer().getPlayerNum();
+            Integer nextFreeID = getNextFreeIdForSplitting(soldierNum, game.getCurrPlayer().getSoldiersPos()[soldierNum-1], game);
             TurnData data = game.getCurrPlayer().playTurn(soldierNum, diceRes);
             boolean isWinner = game.isWinner(game.getCurrPlayer());
+            
 
             game.advanceTurnToNextPlayer();
 
             String newCurrPlayerName = game.getCurrPlayer().getPlayerName();
             int newCurrPlayerID = game.getCurrPlayer().getPlayerNum();
             PlayerType newCurrPlayerType = game.getCurrPlayer().getType();
+            
 
             int currVersion = ServletUtils.getTurnInfoFromServletContext(gameNameFromSession, getServletContext()).getVersionId();
-            TurnInfo ti = new TurnInfo(playerName, playerType, playerID, data, newCurrPlayerName, newCurrPlayerID, newCurrPlayerType, isWinner);
+            
+            TurnInfo ti = new TurnInfo(playerName, playerType, playerID, data, newCurrPlayerName, newCurrPlayerID, newCurrPlayerType, isWinner, nextFreeID);
 
             ti.setVersionId(currVersion + 1);
             int clientVersionID = Integer.parseInt(request.getParameter("versionID"));
@@ -79,6 +84,22 @@ public class PlayTurnServlet extends HttpServlet {
         }
     }
 
+    private Integer getNextFreeIdForSplitting(int soldierNum, int sourceCell, Game game)
+    {
+        int res =0;
+        boolean isFound = false;
+        int[] soldierPosition =game.getCurrPlayer().getSoldiersPos();
+        int i;
+        for (i=0;i<Player.NUM_SOLDIERS&&!isFound;i++)
+        {
+            if (soldierPosition[i] == sourceCell && soldierNum!=(i+1))
+            {
+                res = i+1;
+                isFound = true;
+            }
+        }
+        return res;
+    }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

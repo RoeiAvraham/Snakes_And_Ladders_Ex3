@@ -25,10 +25,11 @@ import model.TurnData;
         Player.PlayerType newCurrPlayerType;
         boolean isThereWinner;
         boolean isItPlayerSessionTurn;
+        Integer nextFreeID;
 
         public TurnInfo(String currPlayerName, Player.PlayerType currPlayerType, Integer currPlayerID,
                 TurnData td, String newCurrPlayerName, Integer newCurrPlayerID, Player.PlayerType newCurrPlayerType,
-                boolean isWinner) {
+                boolean isWinner, Integer nextFreeID) {
             this.currPlayerName = currPlayerName;
             this.currPlayerType = currPlayerType;
             this.currPlayerID = currPlayerID;
@@ -37,6 +38,7 @@ import model.TurnData;
             this.newCurrPlayerID = newCurrPlayerID;
             this.newCurrPlayerType = newCurrPlayerType;
             isThereWinner = isWinner;
+            this.nextFreeID=nextFreeID;
         }
 
         public int getVersionId() {

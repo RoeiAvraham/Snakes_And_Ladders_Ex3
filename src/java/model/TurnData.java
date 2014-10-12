@@ -29,6 +29,10 @@ public class TurnData {
         return turnDiceRes;
     }
 
+    public int getSourceCell()
+    {
+        return sourceCell;
+    }
     /**
      * @param turnDiceRes the turnDiceRes to set
      */

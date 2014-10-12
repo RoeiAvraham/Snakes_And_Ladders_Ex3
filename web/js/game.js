@@ -90,7 +90,7 @@ function placeSnakesOnBoard(snakeMap, boardSize)
         if ((value.from % boardSize) == (value.to % boardSize))
         { //vertical
             $(".snakesandladdersDiv").append('<img  src="images/snakePics/snakeVertical.png" class="snakeOrLadder" id="' + index + '"/>');
-            $("#" + index).css("left", topX + CELL_WIDTH / 2).css("top", topY + CELL_WIDTH / 2).css("height", height);
+            $("#" + index).css("left", topX + CELL_WIDTH / 2 - CELL_WIDTH / 3).css("top", topY + CELL_WIDTH / 2).css("height", height);
         } else if (value.to % boardSize == 0)
         {           //left 
             $(".snakesandladdersDiv").append('<img  src="images/snakePics/snakeLeft.png" class="snakeOrLadder" id="' + index + '"/>');
@@ -173,7 +173,7 @@ function ajaxJoinedPlayerList()
                 $("#gameStatus").slideDown();
                 setTimeout(function() {
                     $("#gameStatus").slideUp();
-                   
+
                 }, 2000);
                 getJoinedPlayersSoldierLocation();
                 setInterval(requestLastTurnData, 1000);
@@ -182,15 +182,25 @@ function ajaxJoinedPlayerList()
                     isItMyTurn = true;
                     initComponentsForNewTurn();
                 }
+                else {
+                    if (currPlayerType == "COMP")
+                    {
+                        setTimeout(function()
+                        {
+                            diceRes =0;
+                            playTurn(0);
+                        }, 2500);
+                    }
+                }
                 //setIntervalForRequest....each second
             }
             else if (!isWaitingShown && !isGameStarted)
-            {           
+            {
                 $("#gameStatus").html("Waiting for players to join...");
                 isWaitingShown = true;
                 $("#gameStatus").slideDown();
             }
-            
+
         }
     });
     return false;
@@ -388,7 +398,9 @@ function playTurn(soldierId) {
 
             if (r.newCurrPlayerType == "COMP" && !r.isThereWinner)
             {
-                playTurn(0, 0);
+                setTimeout(function() {
+                    playTurn(0, 0);
+                }, 2500);
             }
         }
     });
@@ -401,29 +413,23 @@ function moveSoldier(turnData, soldierID)
     var left, top;
     var destCell = +turnData.turnData.turnDest;
     var clickedSoldier = $("[class='soldier'][data-id=" + soldierID + "][data-owner=" + turnData.currPlayerID + "]");
+    //for comp player
     if (clickedSoldier.length == 0)
     {
         clickedSoldier = $("[class='soldier'][data-owner=" + turnData.currPlayerID + "][data-cell=" + turnData.turnData.sourceCell + "]");
     }
     var midDestCell = +clickedSoldier.attr('data-cell') + +turnData.turnData.turnDiceRes;
+    if (midDestCell>boardSize*boardSize)
+    {
+        midDestCell = boardSize*boardSize;
+    }
     var movingSoldier = clickedSoldier;
     var currSoldierNumSoldiers = +$(clickedSoldier).find(".numSoldiersLabel").text();
     if (currSoldierNumSoldiers > 1)
     {
         $(clickedSoldier).find(".numSoldiersLabel").text(+currSoldierNumSoldiers - 1);
         movingSoldier = $(clickedSoldier).clone();
-        var nextFreeSoldierId = $("[class='soldier'][data-cell=" + clickedSoldier.attr('data-cell') + "] [data-owner=" + turnData.currPlayerID + "]").not("[data-id=" + soldierID + "]").attr('data-id');
-        if (nextFreeSoldierId == undefined)
-        {
-            if ($(clickedSoldier).attr("data-id") == 4)
-            {
-                nextFreeSoldierId = 1;
-            }
-            else
-            {
-                nextFreeSoldierId = +$(clickedSoldier).attr("data-id") + 1;
-            }
-        }
+        var nextFreeSoldierId = turnData.nextFreeID;
         $(clickedSoldier).attr("data-id", nextFreeSoldierId);
         $(movingSoldier).attr("data-id", soldierID);
         $(movingSoldier).find(".numSoldiersLabel").text(1);
@@ -452,18 +458,21 @@ function moveSoldier(turnData, soldierID)
 
     if (isThereAlreadySoldierInDest)
     {
-        var numSoldiersAtDestCell = +soldierAlreadyInDestCell.text().trim();
-        var numSoldiersInMovingSoldier = +$(movingSoldier).text().trim();
-        $(movingSoldier).find(".numSoldiersLabel").text(numSoldiersAtDestCell + numSoldiersInMovingSoldier);
-        soldierAlreadyInDestCell.remove();
+        if (!$(soldierAlreadyInDestCell).is(movingSoldier))
+        {
+            var numSoldiersAtDestCell = +soldierAlreadyInDestCell.text().trim();
+            var numSoldiersInMovingSoldier = +$(movingSoldier).text().trim();
+            $(movingSoldier).find(".numSoldiersLabel").text(numSoldiersAtDestCell + numSoldiersInMovingSoldier);
+            soldierAlreadyInDestCell.remove();
+        }
     }
 
 }
 function setSoldiersAction()
 {
-    $("[class='soldier'][data-owner=" + currPlayerID + "]").css("cursor", "pointer");
+    $("[class='soldier'][data-owner=" + currPlayerID + "]").not("[data-cell="+(boardSize*boardSize)+"]").css("cursor", "pointer");
     // $("[class='soldier'][data-owner=1]").fadeOut(100).fadeIn(100);
-    $("[class='soldier'][data-owner=" + currPlayerID + "]").click(function() {
+    $("[class='soldier'][data-owner=" + currPlayerID + "]").not("[data-cell="+(boardSize*boardSize)+"]").click(function() {
         //ajax request to play turn then move the soldier to the right cell..
         $("[class='soldier'][data-owner=" + currPlayerID + "]").css("cursor", '');
         $("[class='soldier'][data-owner=" + currPlayerID + "]").off();

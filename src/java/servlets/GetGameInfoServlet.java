@@ -54,7 +54,7 @@ public class GetGameInfoServlet extends HttpServlet {
             if (turnInfoMap.getTurnInfo(gameNameFromSession) == null)
             {
                 ServletUtils su = new ServletUtils();
-                turnInfoMap.putTurnInfo(gameNameFromSession, new TurnInfo(null,null,null,null,null,null,null,false));
+                turnInfoMap.putTurnInfo(gameNameFromSession, new TurnInfo(null,null,null,null,null,null,null,false,null));
             }
             turnInfoMap.getTurnInfo(gameNameFromSession).setVersionId(0);
             

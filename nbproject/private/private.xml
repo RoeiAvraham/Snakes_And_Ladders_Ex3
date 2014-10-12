@@ -3,19 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/servlets/GetLastTurnDataServlet.java</file>
-            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/servlets/GetGameInfoServlet.java</file>
-            <file>file:/C:/Snakes_And_Ladders_Ex3/web/js/game.js</file>
-            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/utilities/ServletUtils.java</file>
-            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/model/TurnData.java</file>
-            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/model/Game.java</file>
-            <file>file:/C:/Snakes_And_Ladders_Ex3/web/game.html</file>
-            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/servlets/GetJoinedPlayersListServlet.java</file>
-            <file>file:/C:/Snakes_And_Ladders_Ex3/web/css/snakesandladders.css</file>
-            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/servlets/GetDiceResServlet.java</file>
-            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/utilities/Constants.java</file>
-            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/servlets/JoinGameServlet.java</file>
             <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/servlets/PlayTurnServlet.java</file>
+            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/servlets/GetGameInfoServlet.java</file>
+            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/utilities/ServletUtils.java</file>
+            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/servlets/CreateGameFromXmlServlet.java</file>
+            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/servlets/GetLastTurnDataServlet.java</file>
+            <file>file:/C:/Snakes_And_Ladders_Ex3/web/js/game.js</file>
+            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/utilities/Constants.java</file>
+            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/utilities/TurnInfo.java</file>
+            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/model/TurnData.java</file>
         </group>
     </open-files>
 </project-private>
