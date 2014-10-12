@@ -5,7 +5,6 @@
  */
 
 var refreshRate = 2000; //miliseconds
-var getSoldierLocationOfJoinedPlayers;
 var CELL_WIDTH = 86;
 var boardSize;
 var currPlayerID;
@@ -14,6 +13,9 @@ var currPlayerName;
 var diceRes;
 var isGameStarted = false;
 var isWaitingShown = false;
+var versionID = 0;
+var isItMyTurn = false;
+var isFirstCall = true;
 
 function getGameInfo()
 {
@@ -29,6 +31,9 @@ function getGameInfo()
             $(".snakesandladdersDiv").css("width", boardSize * CELL_WIDTH).css("height", boardSize * CELL_WIDTH);
             $(".boardMainDiv").css("width", boardSize * CELL_WIDTH).css("height", boardSize * CELL_WIDTH);
             drawBoard(r.boardSize, r.snakeMap, r.ladderMap);
+            currPlayerID = r.currPlayerId;
+            currPlayerName = r.currPlayerName;
+            currPlayerType = r.currPlayerType;
         }
     });
     return false;
@@ -56,7 +61,6 @@ function drawBoard(boardSize, snakeMap, ladderMap)
 
     placeSnakesAndLaddersOnBoard(snakeMap, ladderMap, boardSize);
 }
-
 
 function refreshPlayerList(r) {
     $("#playerList").empty();
@@ -86,7 +90,7 @@ function placeSnakesOnBoard(snakeMap, boardSize)
         if ((value.from % boardSize) == (value.to % boardSize))
         { //vertical
             $(".snakesandladdersDiv").append('<img  src="images/snakePics/snakeVertical.png" class="snakeOrLadder" id="' + index + '"/>');
-            $("#" + index).css("left", topX + CELL_WIDTH / 2).css("top", topY + CELL_WIDTH / 2).css("height", height);
+            $("#" + index).css("left", topX + CELL_WIDTH / 2 - CELL_WIDTH / 3).css("top", topY + CELL_WIDTH / 2).css("height", height);
         } else if (value.to % boardSize == 0)
         {           //left 
             $(".snakesandladdersDiv").append('<img  src="images/snakePics/snakeLeft.png" class="snakeOrLadder" id="' + index + '"/>');
@@ -169,21 +173,108 @@ function ajaxJoinedPlayerList()
                 $("#gameStatus").slideDown();
                 setTimeout(function() {
                     $("#gameStatus").slideUp();
+
                 }, 2000);
-                initComponentsForNewTurn();
-                clearInterval(getSoldierLocationOfJoinedPlayers);
+                getJoinedPlayersSoldierLocation();
+                setInterval(requestLastTurnData, 1000);
+                if (r.isSessionPlayerFirstPlayer)
+                {
+                    isItMyTurn = true;
+                    initComponentsForNewTurn();
+                }
+                else {
+                    if (currPlayerType == "COMP")
+                    {
+                        setTimeout(function()
+                        {
+                            diceRes =0;
+                            playTurn(0);
+                        }, 2500);
+                    }
+                }
+                //setIntervalForRequest....each second
             }
-            else if (!isWaitingShown)
+            else if (!isWaitingShown && !isGameStarted)
             {
                 $("#gameStatus").html("Waiting for players to join...");
                 isWaitingShown = true;
                 $("#gameStatus").slideDown();
             }
+
         }
     });
     return false;
 }
 
+//fix
+//function playCompTurn()
+//{
+//    getDiceResFromServer();
+//    var soldierId = 0;
+//    playTurn(soldierId);
+//}
+
+//fix - add request fir each second 
+function requestLastTurnData()
+{
+    if (!isItMyTurn) {
+        $.ajax({
+            url: "lastturn",
+            type: "GET",
+            data: {versionID: versionID.toString()},
+            contentType: "application/json",
+            dataType: "json",
+            timeout: 2000,
+            success: function(r) {
+
+                showOtherPlayerTurn(r);
+
+                if (r.isThereWinner)
+                {
+                    //redirect
+                    isItMyTurn = true;
+                    setTimeout(function() {
+                        alert(r.currPlayerName + "won");
+                    }, 2500);
+
+                }
+                else
+                {
+                    currPlayerID = r.newCurrPlayerID;
+                    currPlayerName = r.newCurrPlayerName;
+                    currPlayerType = r.newCurrPlayerType;
+                    versionID = r.versionID;
+                }
+                if (r.isItPlayerSessionTurn)
+                {
+                    setTimeout(function() {
+                        isItMyTurn = true;
+                        initComponentsForNewTurn();
+                    }, 2500);
+                }
+                else
+                {
+                    isItMyTurn = false;
+                }
+            }
+        });
+        return false;
+    }
+}
+
+function showOtherPlayerTurn(r)
+{
+    var audio = document.getElementById("diceSound");
+    audio.play();
+    diceRes = r.turnData.turnDiceRes;
+    setTimeout(function() {
+        $(".dice").css('background-image', 'url(\'images/dicePics/die' + diceRes + '.png\')');
+        setTimeout(function() {
+            moveSoldier(r, r.turnData.turnSoldierNum);
+        }, 1000);
+    }, 1000);
+    $(".dice").css('background-image', 'url(\'images/dicePics/rolling_dice.gif\')');
+}
 function getJoinedPlayersSoldierLocation()
 {
     $.ajax({
@@ -193,38 +284,39 @@ function getJoinedPlayersSoldierLocation()
         dataType: "json",
         timeout: 2000,
         success: function(r) {
-            if (r.areThereNewPlayers)
-            {
-                $.each(r.soldierMap, function(index, player) {
-                    $.each(player, function(soldierIndex, soldier)
+            $.each(r.soldierMap, function(index, player) {
+                $.each(player, function(soldierIndex, soldier)
+                {
+                    var htmlSoldier;
+                    if (soldier.playerType == "COMP")
                     {
-                        var htmlSoldier;
-                        if (soldier.playerType == "COMP")
-                        {
-                            htmlSoldier = $("#board").append('<div class="soldier" data-owner="' + index + '" data-id="' + soldier.soldierNum + '"data-cell="' + soldierIndex + '">\n\
+                        $("#board").append('<div class="soldier" data-owner="' + index + '" data-id="' + soldier.soldierNum + '"data-cell="' + soldierIndex + '">\n\
                                             <label class="numSoldiersLabel">' + soldier.soldierAmount + '</label>\n\
                                             <img src ="images/computerPlayerPics/comp' + index + '.png" class="soldierPic">\n\
                                             </div>');
-                        }
-                        else
-                        {
-                             htmlSoldier = $("#board").append('<div class="soldier" data-owner="' + index + '" data-id="' + soldier.soldierNum + '"data-cell="' + soldierIndex + '">\n\
+                    }
+                    else
+                    {
+                        $("#board").append('<div class="soldier" data-owner="' + index + '" data-id="' + soldier.soldierNum + '"data-cell="' + soldierIndex + '">\n\
                                             <label class="numSoldiersLabel">' + soldier.soldierAmount + '</label>\n\
                                             <img src ="images/humanPlayerPics/human' + index + '.png" class="soldierPic">\n\
                                             </div>');
-                        }
-                        $(htmlSoldier).attr("left",$("#cell"+soldierIndex).position().left+"px").attr("top",$("#cell"+soldierIndex).position().top+"px");
-                        if (index==2 || index == 4)
-                        {
-                          $(htmlSoldier).attr("left", +$(htmlSoldier).attr("left")+ 37 +"px");  
-                        }
-                        if (index == 3 || index ==4)
-                        {
-                         $(htmlSoldier).attr("top", +$(htmlSoldier).attr("top")+ 46 +"px");     
-                        }
-                    });
+                    }
+                    htmlSoldier = $("[class='soldier'][data-owner=" + index + "][data-id=" + soldier.soldierNum + "]");
+                    var leftOffset = 0;
+                    var topOffset = 0;
+                    if (index == 2 || index == 4)
+                    {
+                        leftOffset = 37;
+                    }
+
+                    if (index == 3 || index == 4)
+                    {
+                        topOffset = 46;
+                    }
+                    $(htmlSoldier).attr("style", "left:" + (+$("#cell" + soldierIndex).position().left + +leftOffset) + "px ;top:" + (+$("#cell" + soldierIndex).position().top + +topOffset) + "px;");
                 });
-            }
+            });
         }
     });
     return false;
@@ -234,23 +326,24 @@ $(function()
 {
     $.ajaxSetup({cache: false});
     setInterval(ajaxJoinedPlayerList, refreshRate);
-    getSoldierLocationOfJoinedPlayers = setInterval(getJoinedPlayersSoldierLocation, refreshRate);
     getGameInfo();
     $("#arrow").hide();
     $("#gameStatus").hide();
-    // initComponentsForNewTurn();
 });
 
 function setDiceAction() {
     $(".dice").css("cursor", "pointer");
+    $(".dice").css('background-image', 'url(\'images/dicePics/staticDic.png\')');
+
     $('.dice').click(function() {
         $("#arrow").hide();
+        $(this).css('cursor', 'context-menu');
         var audio = document.getElementById("diceSound");
         audio.play();
-        getDiceResFromServer();
         $(this).off();
         $(this).css('background-image', 'url(\'images/dicePics/rolling_dice.gif\')');
         $(this).css('cursor', 'arrow');
+        getDiceResFromServer();
         return false;
     });
 }
@@ -268,9 +361,10 @@ function getDiceResFromServer()
             setTimeout(function() {
                 $(".dice").css('background-image', 'url(\'images/dicePics/die' + r + '.png\')');
                 diceRes = r;
-                setDiceAction();
-                setSoldiersAction();
-
+                if (currPlayerType == "HUMAN")
+                {
+                    setSoldiersAction();
+                }
             }, 1000);
         }
     });
@@ -281,13 +375,33 @@ function playTurn(soldierId) {
     $.ajax({
         url: "playturn",
         type: "GET",
-        data: {soldierID: soldierId.toString(), diceRes: diceRes.toString()},
+        data: {soldierID: soldierId.toString(), diceRes: diceRes.toString(), versionID: versionID.toString()},
         timeout: 2000,
         success: function(r) {
-            moveSoldier(r, soldierId);
+            if (r.currPlayerType == "HUMAN")
+            {
+                moveSoldier(r, soldierId);
+                if (r.isThereWinner)
+                {
+                    //redirect
+                    setTimeout(function() {
+                        alert(r.currPlayerName + " won!");
+                    }, 1500);
 
-            //if there is a winner - redirect.
-            //else- get data about the next player and set him as curr.
+                }
+                currPlayerID = r.newCurrPlayerID;
+                currPlayerType = r.newCurrPlayerType;
+                currPlayerName = r.newCurrPlayerName;
+                isItMyTurn = false;
+                versionID = r.versionID;
+            }
+
+            if (r.newCurrPlayerType == "COMP" && !r.isThereWinner)
+            {
+                setTimeout(function() {
+                    playTurn(0, 0);
+                }, 2500);
+            }
         }
     });
     return false;
@@ -298,22 +412,30 @@ function moveSoldier(turnData, soldierID)
     //alert(turnData);
     var left, top;
     var destCell = +turnData.turnData.turnDest;
-    var clickedSoldier = $("[class='soldier'][data-id=" + soldierID + "][data-cell][data-owner=1]");
+    var clickedSoldier = $("[class='soldier'][data-id=" + soldierID + "][data-owner=" + turnData.currPlayerID + "]");
+    //for comp player
+    if (clickedSoldier.length == 0)
+    {
+        clickedSoldier = $("[class='soldier'][data-owner=" + turnData.currPlayerID + "][data-cell=" + turnData.turnData.sourceCell + "]");
+    }
     var midDestCell = +clickedSoldier.attr('data-cell') + +turnData.turnData.turnDiceRes;
+    if (midDestCell>boardSize*boardSize)
+    {
+        midDestCell = boardSize*boardSize;
+    }
     var movingSoldier = clickedSoldier;
     var currSoldierNumSoldiers = +$(clickedSoldier).find(".numSoldiersLabel").text();
     if (currSoldierNumSoldiers > 1)
     {
         $(clickedSoldier).find(".numSoldiersLabel").text(+currSoldierNumSoldiers - 1);
-        var splittedSoldier = $(clickedSoldier).clone();
-//            var nextFreeSoldierId = ...
-
-        movingSoldier = splittedSoldier;
-        $(movingSoldier).attr("data-id", 2);
+        movingSoldier = $(clickedSoldier).clone();
+        var nextFreeSoldierId = turnData.nextFreeID;
+        $(clickedSoldier).attr("data-id", nextFreeSoldierId);
+        $(movingSoldier).attr("data-id", soldierID);
         $(movingSoldier).find(".numSoldiersLabel").text(1);
         $("#board").append(movingSoldier);
     }
-    if (midDestCell != turnData.turnData.turnDest)
+    if (midDestCell != destCell)
     {
         left = $("#cell" + midDestCell).position().left + "px";
         top = $("#cell" + midDestCell).position().top + "px";
@@ -323,10 +445,10 @@ function moveSoldier(turnData, soldierID)
         });
     }
 
-    var soldierAlreadyInDestCell = $("[class='soldier'][data-cell='" + turnData.turnData.turnDest + "'][data-owner='1']");
+    var soldierAlreadyInDestCell = $("[class='soldier'][data-cell='" + destCell + "'][data-owner=" + turnData.currPlayerID + "]");
     var isThereAlreadySoldierInDest = soldierAlreadyInDestCell.length;
 
-    $(movingSoldier).attr("data-cell", +turnData.turnData.turnDest);
+    $(movingSoldier).attr("data-cell", destCell);
     left = $("#cell" + turnData.turnData.turnDest).position().left + "px";
     top = $("#cell" + turnData.turnData.turnDest).position().top + "px";
     $(movingSoldier).animate({
@@ -336,21 +458,24 @@ function moveSoldier(turnData, soldierID)
 
     if (isThereAlreadySoldierInDest)
     {
-        var numSoldiersAtDestCell = +soldierAlreadyInDestCell.text().trim();
-        var numSoldiersInMovingSoldier = +$(movingSoldier).text().trim();
-        $(movingSoldier).find(".numSoldiersLabel").text(numSoldiersAtDestCell + numSoldiersInMovingSoldier);
-        soldierAlreadyInDestCell.remove();
+        if (!$(soldierAlreadyInDestCell).is(movingSoldier))
+        {
+            var numSoldiersAtDestCell = +soldierAlreadyInDestCell.text().trim();
+            var numSoldiersInMovingSoldier = +$(movingSoldier).text().trim();
+            $(movingSoldier).find(".numSoldiersLabel").text(numSoldiersAtDestCell + numSoldiersInMovingSoldier);
+            soldierAlreadyInDestCell.remove();
+        }
     }
 
 }
 function setSoldiersAction()
 {
-    $("[class='soldier'][data-owner=1]").css("cursor", "pointer");
+    $("[class='soldier'][data-owner=" + currPlayerID + "]").not("[data-cell="+(boardSize*boardSize)+"]").css("cursor", "pointer");
     // $("[class='soldier'][data-owner=1]").fadeOut(100).fadeIn(100);
-    $("[class='soldier'][data-owner=1]").click(function() {
+    $("[class='soldier'][data-owner=" + currPlayerID + "]").not("[data-cell="+(boardSize*boardSize)+"]").click(function() {
         //ajax request to play turn then move the soldier to the right cell..
-        $("[class='soldier'][data-owner=1]").css("cursor", '');
-        $("[class='soldier'][data-owner=1]").off();
+        $("[class='soldier'][data-owner=" + currPlayerID + "]").css("cursor", '');
+        $("[class='soldier'][data-owner=" + currPlayerID + "]").off();
         playTurn($(this).attr('data-id'));
     });
 }
@@ -360,9 +485,4 @@ function initComponentsForNewTurn()
     //set player pic
     $("#arrow").show();
     setDiceAction();
-
 }
-
-
-
-

@@ -6,7 +6,6 @@
 package servlets;
 
 import com.google.gson.Gson;
-import exception.DuplicatePlayerNamesException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -14,18 +13,18 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import model.Game;
-import model.GameManager;
+import static model.Player.PlayerType.HUMAN;
 import utilities.Constants;
 import utilities.ServletUtils;
 import utilities.SessionUtils;
+import utilities.TurnInfo;
 
 /**
  *
- * @author roei.avraham
+ * @author Anat
  */
-@WebServlet(name = "StartGameServlet", urlPatterns = {"/startgame"})
-public class StartGameServlet extends HttpServlet {
+@WebServlet(name = "GetLastTurnDataServlet", urlPatterns = {"/lastturn"})
+public class GetLastTurnDataServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,37 +38,35 @@ public class StartGameServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
+        try (PrintWriter out = response.getWriter()) {
+            String gameNameFromSession = SessionUtils.getGameName(request);
 
-        String gameNameFromSession = SessionUtils.getGameName(request);
-        GameManager gameManager = ServletUtils.getGameManager(getServletContext());
-        boolean isXmlCreation = false;
-        
-        if (gameNameFromSession == null) {
-            try {
-                String gameNameFromParameter = request.getParameter(Constants.GAME_NAME).trim();
-                String playerNameFromParameter = request.getParameter(Constants.PLAYER_NAME).trim();
-                Game currGame = gameManager.getGames().get(gameNameFromParameter);
-                
-                //check if request came from xml creation:
-                if (currGame == null) {
-                    isXmlCreation = true;
-                    currGame = ServletUtils.getXmlGameFromServletContext(getServletContext());
+            Integer serverVersionID = ServletUtils.getTurnInfoFromServletContext(gameNameFromSession, getServletContext()).getVersionId();
+            Integer clientVersionID = Integer.parseInt(request.getParameter("versionID"));
+            String playerNameFromSession = (String) request.getSession().getAttribute("playerName");
+            Gson gson = new Gson();
+            String jsonResponse;
+            if (clientVersionID < serverVersionID) {
+                TurnInfo ti = ServletUtils.getTurnInfoFromServletContext(gameNameFromSession, getServletContext());
+
+//                if (ti.getNextPlayerType() == HUMAN) {
+                if (playerNameFromSession.equals(ti.getNextPlayerName())) {
+                    ti.setIsPlayerSessionTurn(true);
+                } else {
+                    ti.setIsPlayerSessionTurn(false);
                 }
-                currGame.joinPlayer(playerNameFromParameter);
-              
-                gameManager.addGame(gameNameFromParameter, currGame);
-                request.getSession(true).setAttribute(Constants.GAME_NAME, gameNameFromParameter);
-                request.getSession().setAttribute(Constants.PLAYER_NAME, playerNameFromParameter);
-               
-                sendDataToClient(response, Constants.GAME_HTML);
-            } catch (DuplicatePlayerNamesException ex) {
-                sendDataToClient(response, Constants.PLAYER_EXISTS);
+                jsonResponse = gson.toJson(ti);
+
+//                } else {
+//                    jsonResponse = gson.toJson(serverVersionID);
+//                }
+            } else {
+                jsonResponse = "{versionID:"+clientVersionID+"}";
             }
+            out.print(jsonResponse);
+            out.flush();
         }
-        else
-        {
-           sendDataToClient(response, Constants.GAME_HTML);
-        }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -110,16 +107,5 @@ public class StartGameServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-    
-        private void sendDataToClient(HttpServletResponse response, String data) throws IOException {
-
-        try (PrintWriter out = response.getWriter()) 
-        {   
-            Gson gson = new Gson();
-            String jsonResponse = gson.toJson(data);
-            out.print(jsonResponse);
-            out.flush();
-        }
-    }
 
 }
