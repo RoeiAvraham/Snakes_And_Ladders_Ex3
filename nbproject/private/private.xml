@@ -6,7 +6,12 @@
             <file>file:/C:/Snakes_And_Ladders_Ex3/web/css/snakesandladders.css</file>
             <file>file:/C:/Snakes_And_Ladders_Ex3/web/game.html</file>
             <file>file:/C:/Snakes_And_Ladders_Ex3/web/js/game.js</file>
-            <file>file:/C:/Snakes_And_Ladders_Ex3/web/images/favicon.ico</file>
+            <file>file:/C:/Snakes_And_Ladders_Ex3/web/winner.html</file>
+            <file>file:/C:/Snakes_And_Ladders_Ex3/web/js/winner.js</file>
+            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/servlets/WinnerServet.java</file>
+            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/servlets/GetPlayerNamesStartXmlGame.java</file>
+            <file>file:/C:/Snakes_And_Ladders_Ex3/web/js/hostGameFromXml.js</file>
+            <file>file:/C:/Snakes_And_Ladders_Ex3/src/java/servlets/CreateGameFromXmlServlet.java</file>
         </group>
     </open-files>
 </project-private>
