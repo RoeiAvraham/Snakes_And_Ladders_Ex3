@@ -221,23 +221,39 @@ td
     background: #1b5c1d;
 }
 
-/*input {
-    margin-top: 5px;
-    margin-bottom: 5px;
-    display:inline-block;
-    *display: inline;      for IE7
-    zoom:1;               for IE7
-    vertical-align:middle;
-    margin-left:20px
+
+
+.trophy{
+    /*background-image: url('../images/winnerPics/trophy.png');*/
+    top: 100px;
+    position: relative;
+    width: 300px;
+    height: 400px; 
+    margin: auto;
+    left:0;
+    right:0;
+    display: block;
 }
 
-label {
-    display:inline-block;
-    *display: inline;      for IE7
-    zoom:1;               for IE7
-    float: left;
-    padding-top: 5px;
-    text-align: right;
-    width: 140px;
-}*/
 
+.winnerName{
+    position: relative;
+    display: block;
+    text-align:center;
+    font-size: 50px;
+    font-weight: bold;
+    top: 70px;
+    
+}
+.winner
+{
+    /*top: 100px;*/
+    top:-150px;
+    position: relative;
+    /*    width: 300px;
+        height: 400px; */
+    margin: auto;
+    left:0;
+    right:0;
+    display: block; 
+}

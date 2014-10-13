@@ -231,38 +231,52 @@ function requestLastTurnData()
             dataType: "json",
             timeout: 2000,
             success: function(r) {
-                if (currPlayerType == "COMP")
-                {
-                    $(".currPlayer").html('<label class="currenPlayerLabel">Current Player: <br><span class="currPlayerName">' + currPlayerName + '</span></label><img src="images/computerPlayerPics/comp' + currPlayerID + '.png" class="currPlayerPic">');
+                if (r.hasAnyPlayerLeft)
+                {//check if someone wins and redirect him
+                    $("#gameStatus").html(r.playerLeftName + " has left the game.");
+                    $("#gameStatus").slideDown();
+                    setTimeout(function()
+                    {
+                        $("#gameStatus").slideUp();
+                    });
+                    $("[class='soldier][data-owner='1']");
+                    //guzi
                 }
                 else
                 {
-                    $(".currPlayer").html('<label class="currenPlayerLabel">Current Player: <br><span class="currPlayerName">' + currPlayerName + '</span></label><img src="images/humanPlayerPics/human' + currPlayerID + 'big.png" class="currPlayerPic">');
-                }
-                showOtherPlayerTurn(r);
-                if (r.isThereWinner)
-                {
-                    //redirect
-                    isItMyTurn = true;
-                    setTimeout(function() {
-                        alert(r.currPlayerName + "won");
-                    }, 3000);
-
-                }
-                currPlayerID = r.newCurrPlayerID;
-                currPlayerName = r.newCurrPlayerName;
-                currPlayerType = r.newCurrPlayerType;
-                versionID = r.versionID;
-                if (r.isItPlayerSessionTurn)
-                {
-                    setTimeout(function() {
+                    if (currPlayerType == "COMP")
+                    {
+                        $(".currPlayer").html('<label class="currenPlayerLabel">Current Player: <br><span class="currPlayerName">' + currPlayerName + '</span></label><img src="images/computerPlayerPics/comp' + currPlayerID + '.png" class="currPlayerPic">');
+                    }
+                    else
+                    {
+                        $(".currPlayer").html('<label class="currenPlayerLabel">Current Player: <br><span class="currPlayerName">' + currPlayerName + '</span></label><img src="images/humanPlayerPics/human' + currPlayerID + 'big.png" class="currPlayerPic">');
+                    }
+                    showOtherPlayerTurn(r);
+                    if (r.isThereWinner)
+                    {
+                        //redirect
                         isItMyTurn = true;
-                        initComponentsForNewTurn();
-                    }, 2500);
-                }
-                else
-                {
-                    isItMyTurn = false;
+                        setTimeout(function() {
+                            window.location.href = "winner.html";
+                        }, 2500);
+
+                    }
+                    currPlayerID = r.newCurrPlayerID;
+                    currPlayerName = r.newCurrPlayerName;
+                    currPlayerType = r.newCurrPlayerType;
+                    versionID = r.versionID;
+                    if (r.isItPlayerSessionTurn)
+                    {
+                        setTimeout(function() {
+                            isItMyTurn = true;
+                            initComponentsForNewTurn();
+                        }, 2500);
+                    }
+                    else
+                    {
+                        isItMyTurn = false;
+                    }
                 }
             }
         });
@@ -279,6 +293,14 @@ function showOtherPlayerTurn(r)
         $(".dice").css('background-image', 'url(\'images/dicePics/die' + diceRes + '.png\')');
         setTimeout(function() {
             moveSoldier(r, r.turnData.turnSoldierNum);
+            if (r.newCurrPlayerType == "HUMAN")
+            {
+                $(".currPlayer").html('<label class="currenPlayerLabel">Current Player: <br><span class="currPlayerName">' + r.newCurrPlayerName + '</span></label><img src="images/humanPlayerPics/human' + r.newCurrPlayerID + 'big.png" class="currPlayerPic">');
+                if (!isItMyTurn)
+                {
+                    $(".dice").css('background-image', 'url(\'images/wait.gif\')');
+                }
+            }
         }, 1000);
     }, 1000);
     $(".dice").css('background-image', 'url(\'images/dicePics/rolling_dice.gif\')');
@@ -399,28 +421,31 @@ function playTurn(soldierId) {
                 {
                     //redirect
                     setTimeout(function() {
-                        alert(r.currPlayerName + " won!");
+                        window.location.href = "winner.html";
                     }, 1500);
                 }
+
                 if (r.newCurrPlayerType == "HUMAN")
                 {
-                    $(".currPlayer").html('<label class="currenPlayerLabel">Current Player: <br><span class="currPlayerName">' + currPlayerName + '</span></label><img src="images/humanPlayerPics/human' + currPlayerID + 'big.png" class="currPlayerPic">');
+                    $(".currPlayer").html('<label class="currenPlayerLabel">Current Player: <br><span class="currPlayerName">' + r.newCurrPlayerName + '</span></label><img src="images/humanPlayerPics/human' + r.newCurrPlayerID + 'big.png" class="currPlayerPic">');
                 }
-            }
 
+
+            }
             if (r.newCurrPlayerType == "COMP" && !r.isThereWinner)
             {
-                if (r.currPlayerType == "COMP") {
-                    setTimeout(function() {
+//                if (r.currPlayerType == "COMP") {
+                setTimeout(function() {
 //                    $(".currPlayer").html('<label class="currenPlayerLabel">Current Player: <br><span class="currPlayerName">' + currPlayerName + '</span></label><img src="images/computerPlayerPics/comp' + currPlayerID + '.png" class="currPlayerPic">');
-                        playTurn(0, 0);
-                    }, 2000);
-                }
-                else
-                {
                     playTurn(0, 0);
-                }
+                }, 2000);
+//                }
+//                else
+//                {
+//                    playTurn(0, 0);
+//                }
             }
+
 
         }
     });
