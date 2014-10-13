@@ -26,6 +26,8 @@ import model.TurnData;
         boolean isThereWinner;
         boolean isItPlayerSessionTurn;
         Integer nextFreeID;
+        boolean hasAnyPlayerLeft;
+        String playerLeftName;
 
         public TurnInfo(String currPlayerName, Player.PlayerType currPlayerType, Integer currPlayerID,
                 TurnData td, String newCurrPlayerName, Integer newCurrPlayerID, Player.PlayerType newCurrPlayerType,
@@ -61,4 +63,13 @@ import model.TurnData;
             return this.newCurrPlayerName;
         }
         
+        public void setHasAnyPlayerLeft(boolean hasAnyPlayerLeft)
+        {
+            this.hasAnyPlayerLeft = hasAnyPlayerLeft;
+        }
+        
+        public void setPlayerLeftName(String playerLeftName)
+        {
+            this.playerLeftName = playerLeftName;
+        }
     }

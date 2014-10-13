@@ -15,9 +15,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Game;
 import model.GameManager;
+import model.Player;
+import model.Player.PlayerType;
 import utilities.Constants;
 import utilities.ServletUtils;
 import utilities.SessionUtils;
+import utilities.TurnInfo;
 
 /**
  *
@@ -44,35 +47,31 @@ public class PlayerQuitServlet extends HttpServlet {
         Game currGame = gameManager.getGames().get(gameNameFromSession);
         String playerNameFromSession = (String) request.getSession().getAttribute(Constants.PLAYER_NAME);
         
+        TurnInfo ti = new TurnInfo(null, null, null, null, null, null, null, false, null);
+        
         if (currGame.isGameStarted())
         {
-            currGame.removePlayerFromGame(currGame.getPlayerByName(playerNameFromSession));
+            currGame.removePlayerFromGame(currGame.getPlayerByName(playerNameFromSession));    
+            ti.setHasAnyPlayerLeft(true);
+            ti.setPlayerLeftName(playerNameFromSession);
+            currGame.advanceTurnToNextPlayer();
+            int currVersion = ServletUtils.getTurnInfoFromServletContext(gameNameFromSession, getServletContext()).getVersionId();
+            ti.setVersionId(currVersion + 1);
         }
         else
         {
             currGame.getPlayerByName(playerNameFromSession).setIsJoined(false);
+            currGame.decrementJoinedCount();
             currGame.getPlayerByName(playerNameFromSession).setPlayerName(null);
         }
-      
-        try (PrintWriter out = response.getWriter()) {
-            Gson gson = new Gson();
-            String jsonResponse;
-            
-            WinnerPlayer wp;
-            
-            if (currGame.isWinner(currGame.getPlayerList().getFirst()))
-            {
-                wp = new WinnerPlayer(true, currGame.getPlayerList().getFirst().getPlayerName());
-            }
-            else
-            {
-                wp = new WinnerPlayer(false, null);
-            }
-            
-            jsonResponse = gson.toJson(wp);
-            out.print(jsonResponse);
-            out.flush();
-        }   
+        
+        SessionUtils.clearSession(request);
+        
+        if (checkIfOnlyComputerPlayersRemain(currGame))
+        {
+            ServletUtils.removeGameFromGameManager(gameNameFromSession, getServletContext());
+        }
+        response.sendRedirect("");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -114,15 +113,16 @@ public class PlayerQuitServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
     
-    class WinnerPlayer
+    private boolean checkIfOnlyComputerPlayersRemain(Game game)
     {
-        boolean isWinner;
-        String winnerName;
-        
-        public WinnerPlayer(boolean isWinner, String winnerName)
-        {
-            this.isWinner = isWinner;
-            this.winnerName = winnerName;
+        boolean allAreComp = true;
+
+        for (Player p : game.getPlayerList()) {
+            if (p.getType() == PlayerType.HUMAN) {
+                allAreComp = false;
+            }
         }
+        
+        return allAreComp;
     }
-}
+ }

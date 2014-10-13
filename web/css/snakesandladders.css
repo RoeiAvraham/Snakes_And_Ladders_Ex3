@@ -152,6 +152,7 @@ td
     //    border-radius: 15px;
 }
 
+<<<<<<< HEAD
 .currPlayer{
     position: absolute;
     width: 300px;
@@ -183,3 +184,55 @@ td
     text-decoration: underline;
     font-size: 40px
 }
+=======
+.leaveButton {
+   border-top: 1px solid #e3b964;
+   background: #d6a84d;
+   background: -webkit-gradient(linear, left top, left bottom, from(#db7e0d), to(#d6a84d));
+   background: -webkit-linear-gradient(top, #db7e0d, #d6a84d);
+   background: -moz-linear-gradient(top, #db7e0d, #d6a84d);
+   background: -ms-linear-gradient(top, #db7e0d, #d6a84d);
+   background: -o-linear-gradient(top, #db7e0d, #d6a84d);
+   padding: 11px 22px;
+   -webkit-border-radius: 18px;
+   -moz-border-radius: 18px;
+   border-radius: 18px;
+   -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   box-shadow: rgba(0,0,0,1) 0 1px 0;
+   text-shadow: rgba(0,0,0,.4) 0 1px 0;
+   color: white;
+   font-size: 20px;
+   font-family: 'Lucida Grande', Helvetica, Arial, Sans-Serif;
+   text-decoration: none;
+   vertical-align: middle;
+   margin-top: 20px;
+   }
+.leaveButton:hover {
+   background: #ffa73b;
+   }
+.leaveButton:active {
+   border-top-color: #1b5c1d;
+   background: #1b5c1d;
+   }
+
+/*input {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display:inline-block;
+    *display: inline;      for IE7
+    zoom:1;               for IE7
+    vertical-align:middle;
+    margin-left:20px
+}
+
+label {
+    display:inline-block;
+    *display: inline;      for IE7
+    zoom:1;               for IE7
+    float: left;
+    padding-top: 5px;
+    text-align: right;
+    width: 140px;
+}*/
+>>>>>>> 422fb25a4390d60dd3480007bf43ae10ae17e497

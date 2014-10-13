@@ -65,18 +65,18 @@ public class PlayTurnServlet extends HttpServlet {
             TurnData data = game.getCurrPlayer().playTurn(soldierNum, diceRes);
             boolean isWinner = game.isWinner(game.getCurrPlayer());
             
-
             game.advanceTurnToNextPlayer();
 
             String newCurrPlayerName = game.getCurrPlayer().getPlayerName();
             int newCurrPlayerID = game.getCurrPlayer().getPlayerNum();
             PlayerType newCurrPlayerType = game.getCurrPlayer().getType();
             
-
             int currVersion = ServletUtils.getTurnInfoFromServletContext(gameNameFromSession, getServletContext()).getVersionId();
             
             TurnInfo ti = new TurnInfo(playerName, playerType, playerID, data, newCurrPlayerName, newCurrPlayerID, newCurrPlayerType, isWinner, nextFreeID);
-
+            
+            ti.setHasAnyPlayerLeft(false);
+            ti.setPlayerLeftName(null);
             ti.setVersionId(currVersion + 1);
             int clientVersionID = Integer.parseInt(request.getParameter("versionID"));
             ServletUtils.SetTurnInfoInServletContext(gameNameFromSession, ti, getServletContext());

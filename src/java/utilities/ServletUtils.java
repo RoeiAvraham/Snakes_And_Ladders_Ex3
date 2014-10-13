@@ -28,6 +28,12 @@ public class ServletUtils {
         }
         return (GameManager) servletContext.getAttribute(GAME_MANAGER_ATTRIBUTE_NAME);
     }
+    
+    public static void removeGameFromGameManager(String gameName, ServletContext servletContext)
+    {
+        GameManager gameManager = getGameManager(servletContext);
+        gameManager.removeGame(gameName);
+    }
 
     public static void setXmlGameInServletContext(ServletContext servletContext, Game xmlGame) {
         servletContext.setAttribute(GAME_XML_ATTRIBUTE_NAME, xmlGame);
