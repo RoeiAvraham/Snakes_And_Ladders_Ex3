@@ -3,6 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/Users/roei.avraham/JavaClass/Snakes_And_Ladders_Ex3/Snakes_And_Ladders_Ex3/src/java/servlets/PlayerQuitServlet.java</file>
             <file>file:/Users/roei.avraham/JavaClass/Snakes_And_Ladders_Ex3/Snakes_And_Ladders_Ex3/src/java/exception/DuplicatePlayerNamesXmlException.java</file>
             <file>file:/Users/roei.avraham/JavaClass/Snakes_And_Ladders_Ex3/Snakes_And_Ladders_Ex3/web/game.html</file>
@@ -25,6 +26,12 @@
             <file>file:/Users/roei.avraham/JavaClass/Snakes_And_Ladders_Ex3/Snakes_And_Ladders_Ex3/src/java/servlets/GetGameInfoServlet.java</file>
             <file>file:/Users/roei.avraham/JavaClass/Snakes_And_Ladders_Ex3/Snakes_And_Ladders_Ex3/src/java/servlets/GetPlayerNamesStartXmlGame.java</file>
             <file>file:/Users/roei.avraham/JavaClass/Snakes_And_Ladders_Ex3/Snakes_And_Ladders_Ex3/src/java/servlets/CreateNewGameServlet.java</file>
+=======
+            <file>file:/C:/Snakes_And_Ladders_Ex3/web/css/snakesandladders.css</file>
+            <file>file:/C:/Snakes_And_Ladders_Ex3/web/game.html</file>
+            <file>file:/C:/Snakes_And_Ladders_Ex3/web/js/game.js</file>
+            <file>file:/C:/Snakes_And_Ladders_Ex3/web/images/favicon.ico</file>
+>>>>>>> 681159fa11f16b8a928734731e62ee1831d1cff7
         </group>
     </open-files>
 </project-private>
