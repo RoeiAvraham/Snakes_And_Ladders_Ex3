@@ -29,6 +29,7 @@ public class Game {
     private LoadedFrom gameSrc;
     boolean isStarted = false;
     private int joinedCount;
+    private Date lastPlayTime;
 
     public Game(Snakesandladders gameXml) throws XmlIsInvalidException {
         gameName = gameXml.getName();
@@ -379,5 +380,19 @@ public class Game {
     public void decrementJoinedCount()
     {
         joinedCount--;
+    }
+
+    /**
+     * @return the lastPlayTime
+     */
+    public Date getLastPlayTime() {
+        return lastPlayTime;
+    }
+
+    /**
+     * @param lastPlayTime the lastPlayTime to set
+     */
+    public void setLastPlayTime(Date lastPlayTime) {
+        this.lastPlayTime = lastPlayTime;
     }
 }

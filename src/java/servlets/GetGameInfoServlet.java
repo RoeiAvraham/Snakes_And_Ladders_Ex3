@@ -8,6 +8,7 @@ package servlets;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.HashMap;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -62,6 +63,9 @@ public class GetGameInfoServlet extends HttpServlet {
                                                    currGame.getCurrPlayer().getPlayerNum(),
                                                    currGame.getCurrPlayer().getPlayerName(),
                                                    currGame.getCurrPlayer().getType());
+            
+            currGame.setLastPlayTime(new Date());
+            
             try (PrintWriter out = response.getWriter()) {
             
             Gson gson = new Gson();
