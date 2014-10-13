@@ -64,7 +64,6 @@ public class GetGameInfoServlet extends HttpServlet {
                                                    currGame.getCurrPlayer().getPlayerName(),
                                                    currGame.getCurrPlayer().getType());
             
-            currGame.setLastPlayTime(new Date());
             
             try (PrintWriter out = response.getWriter()) {
             

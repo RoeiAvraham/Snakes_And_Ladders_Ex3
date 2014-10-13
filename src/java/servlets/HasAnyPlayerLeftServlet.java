@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package servlets;
 
 import com.google.gson.Gson;
@@ -17,15 +16,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Game;
 import model.GameManager;
+import utilities.Constants;
 import utilities.ServletUtils;
 import utilities.SessionUtils;
+import utilities.TurnInfo;
 
 /**
  *
- * @author Anat
+ * @author roei.avraham
  */
-@WebServlet(name = "GetDiceResServlet", urlPatterns = {"/diceRes"})
-public class GetDiceResServlet extends HttpServlet {
+@WebServlet(name = "HasAnyPlayerLeftServlet", urlPatterns = {"/hasplayerleft"})
+public class HasAnyPlayerLeftServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,16 +41,23 @@ public class GetDiceResServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("application/json");
         try (PrintWriter out = response.getWriter()) {
+
+            Date currDate = new Date();
             String gameNameFromSession = SessionUtils.getGameName(request);
-            GameManager gm = ServletUtils.getGameManager(getServletContext());
-            Game currGame = gm.getGames().get(gameNameFromSession);
-            currGame.setLastPlayTime(new Date());
-            Integer diceRes = currGame.getCurrPlayer().throwDice();
-            
-            Gson gson = new Gson();
-            String jsonResponse = gson.toJson(diceRes);
-            out.print(jsonResponse);
-            out.flush();
+            GameManager gameManager = ServletUtils.getGameManager(getServletContext());
+            Game currGame = gameManager.getGames().get(gameNameFromSession);
+            TurnInfo ti = ServletUtils.getTurnInfoFromServletContext(gameNameFromSession, getServletContext());
+
+            if (ti.isHasAnyPlayerLeft()) {
+                Gson gson = new Gson();
+                String jsonResponse = gson.toJson(ti);
+                out.print(jsonResponse);
+                out.flush();
+            } else {
+                if (((Integer.parseInt(currDate.toString()) - Integer.parseInt(currGame.getLastPlayTime().toString())) / 1000) > Constants.SERVER_TIMEOUT) {
+                    ServletUtils.retirePlayerFromGame(getServletContext(), currGame, currGame.getCurrPlayer().getPlayerName(), ti);
+                }
+            }
         }
     }
 
