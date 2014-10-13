@@ -8,6 +8,7 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -47,6 +48,8 @@ public class PlayTurnServlet extends HttpServlet {
             String gameNameFromSession = SessionUtils.getGameName(request);
             GameManager gameManager = ServletUtils.getGameManager(getServletContext());
             Game game = gameManager.getGames().get(gameNameFromSession);
+            game.setLastPlayTime(new Date());
+            
             int soldierNum, diceRes;
 
             if (game.getCurrPlayer().getType() == HUMAN) {

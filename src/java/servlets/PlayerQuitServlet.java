@@ -5,9 +5,8 @@
  */
 package servlets;
 
-import com.google.gson.Gson;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -51,12 +50,7 @@ public class PlayerQuitServlet extends HttpServlet {
         
         if (currGame.isGameStarted())
         {
-            currGame.removePlayerFromGame(currGame.getPlayerByName(playerNameFromSession));    
-            ti.setHasAnyPlayerLeft(true);
-            ti.setPlayerLeftName(playerNameFromSession);
-            currGame.advanceTurnToNextPlayer();
-            int currVersion = ServletUtils.getTurnInfoFromServletContext(gameNameFromSession, getServletContext()).getVersionId();
-            ti.setVersionId(currVersion + 1);
+            ServletUtils.retirePlayerFromGame(getServletContext(),currGame, playerNameFromSession,ti);
         }
         else
         {
@@ -70,6 +64,11 @@ public class PlayerQuitServlet extends HttpServlet {
         if (checkIfOnlyComputerPlayersRemain(currGame))
         {
             ServletUtils.removeGameFromGameManager(gameNameFromSession, getServletContext());
+        }
+        else if (currGame.isWinner(currGame.getPlayerList().getFirst()))
+        {
+            ti.setIsThereWinner(true);
+            ServletUtils.SetTurnInfoInServletContext(gameNameFromSession, ti, getServletContext());
         }
         response.sendRedirect("");
     }

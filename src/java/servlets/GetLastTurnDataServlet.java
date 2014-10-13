@@ -8,11 +8,15 @@ package servlets;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.Game;
+import model.GameManager;
+import utilities.Constants;
 import utilities.ServletUtils;
 import utilities.SessionUtils;
 import utilities.TurnInfo;
@@ -37,24 +41,31 @@ public class GetLastTurnDataServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("application/json");
         try (PrintWriter out = response.getWriter()) {
+
+            Date currDate = new Date();
             String gameNameFromSession = SessionUtils.getGameName(request);
+            GameManager gameManager = ServletUtils.getGameManager(getServletContext());
+            Game currGame = gameManager.getGames().get(gameNameFromSession);
 
             Integer serverVersionID = ServletUtils.getTurnInfoFromServletContext(gameNameFromSession, getServletContext()).getVersionId();
             Integer clientVersionID = Integer.parseInt(request.getParameter("versionID"));
             String playerNameFromSession = (String) request.getSession().getAttribute("playerName");
             Gson gson = new Gson();
             String jsonResponse;
-            if (clientVersionID < serverVersionID) {
-                TurnInfo ti = ServletUtils.getTurnInfoFromServletContext(gameNameFromSession, getServletContext());
+            
+            TurnInfo ti = ServletUtils.getTurnInfoFromServletContext(gameNameFromSession, getServletContext());
+            
+            if (clientVersionID < serverVersionID) {    
                 if (playerNameFromSession.equals(ti.getNextPlayerName())) {
                     ti.setIsPlayerSessionTurn(true);
                 } else {
                     ti.setIsPlayerSessionTurn(false);
                 }
-                jsonResponse = gson.toJson(ti);
+                jsonResponse = gson.toJson(ti); 
             } else {
-                jsonResponse = "{versionID:"+clientVersionID+"}";
+                jsonResponse = "{versionID:" + clientVersionID + "}";
             }
+
             out.print(jsonResponse);
             out.flush();
         }

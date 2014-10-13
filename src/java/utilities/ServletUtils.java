@@ -1,6 +1,7 @@
 package utilities;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -140,5 +141,24 @@ public class ServletUtils {
             servletContext.setAttribute(TURN_INFO_MAP_ATTRIBUTE_NAME, new TurnInfoMap(new HashMap<String, TurnInfo>()));
         }
         return (TurnInfoMap) servletContext.getAttribute(TURN_INFO_MAP_ATTRIBUTE_NAME);
+    }
+    
+    public static void retirePlayerFromGame(ServletContext servletContext, Game currGame, String playerLeftName, TurnInfo ti)
+    {
+        currGame.setLastPlayTime(new Date());
+        
+        if (playerLeftName.equals(currGame.getCurrPlayer().getPlayerName()))
+        {
+            currGame.advanceTurnToNextPlayer();
+        }
+        
+        currGame.removePlayerFromGame(currGame.getPlayerByName(playerLeftName));
+        ti.setHasAnyPlayerLeft(true);
+        ti.setPlayerLeftName(playerLeftName);
+        ti.setPlayerLeftID(currGame.getPlayerNumByName(playerLeftName));
+        
+        int currVersion = ServletUtils.getTurnInfoFromServletContext(currGame.getGameName(), servletContext).getVersionId();
+        ti.setVersionId(currVersion + 1);
+        ServletUtils.SetTurnInfoInServletContext(currGame.getGameName(), ti, servletContext);
     }
 }
