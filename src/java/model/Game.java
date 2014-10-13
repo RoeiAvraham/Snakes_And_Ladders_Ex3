@@ -44,6 +44,8 @@ public class Game {
         checkIfXmlGameAlreadyFinished(m_numSoldiersToWin, gameXml.getBoard().getCells().getCell(), gameXml.getBoard().getSize());
         checkNumOfSoldiersXml(gameXml.getBoard().getCells().getCell(), gameXml.getPlayers().getPlayer());
 
+        checkIfAllXmlGamePlayersAreComp(gameXml);
+
         for (xmlPackage.Players.Player p : gameXml.getPlayers().getPlayer()) {
             if (playerNames.contains(p.getName())) {
                 throw new DuplicatePlayerNamesXmlException();
@@ -98,7 +100,7 @@ public class Game {
         }
         return null;
     }
-    
+
     public Player getPlayerByName(String playerName) {
         for (Player p : playerList) {
             if (p.getPlayerName().equals(playerName)) {
@@ -175,20 +177,18 @@ public class Game {
         }
 
     }
-    
-    public int getPlayerNumByName(String playerName)
-    {
+
+    public int getPlayerNumByName(String playerName) {
         int res = 0;
-        
-        for (int i = 0; i < playerList.size(); i++)
-        {
-            if (playerList.get(i).getPlayerName() != null)
-            {
-                if (playerList.get(i).getPlayerName().equals(playerName))
+
+        for (int i = 0; i < playerList.size(); i++) {
+            if (playerList.get(i).getPlayerName() != null) {
+                if (playerList.get(i).getPlayerName().equals(playerName)) {
                     res = playerList.get(i).getPlayerNum();
+                }
             }
         }
-        
+
         return res;
     }
 
@@ -282,6 +282,20 @@ public class Game {
         return res;
     }
 
+    private void checkIfAllXmlGamePlayersAreComp(xmlPackage.Snakesandladders gameXml) throws OnlyComputerPlayersXmlException {
+        boolean allAreComp = true;
+
+        for (xmlPackage.Players.Player p : gameXml.getPlayers().getPlayer()) {
+            if (p.getType() == HUMAN) {
+                allAreComp = false;
+            }
+        }
+
+        if (allAreComp) {
+            throw new OnlyComputerPlayersXmlException();
+        }
+    }
+
     public void checkIfXmlGameAlreadyFinished(int numSoldiersToWin, List<xmlPackage.Cell> cellsXml, int xmlBoardSize)
             throws XmlIsInvalidException {
         for (xmlPackage.Cell c : cellsXml) {
@@ -360,5 +374,10 @@ public class Game {
      */
     public int getJoinedCount() {
         return joinedCount;
+    }
+    
+    public void decrementJoinedCount()
+    {
+        joinedCount--;
     }
 }

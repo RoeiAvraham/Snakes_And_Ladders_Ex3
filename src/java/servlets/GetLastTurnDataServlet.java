@@ -13,8 +13,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import static model.Player.PlayerType.HUMAN;
-import utilities.Constants;
 import utilities.ServletUtils;
 import utilities.SessionUtils;
 import utilities.TurnInfo;
@@ -48,18 +46,12 @@ public class GetLastTurnDataServlet extends HttpServlet {
             String jsonResponse;
             if (clientVersionID < serverVersionID) {
                 TurnInfo ti = ServletUtils.getTurnInfoFromServletContext(gameNameFromSession, getServletContext());
-
-//                if (ti.getNextPlayerType() == HUMAN) {
                 if (playerNameFromSession.equals(ti.getNextPlayerName())) {
                     ti.setIsPlayerSessionTurn(true);
                 } else {
                     ti.setIsPlayerSessionTurn(false);
                 }
                 jsonResponse = gson.toJson(ti);
-
-//                } else {
-//                    jsonResponse = gson.toJson(serverVersionID);
-//                }
             } else {
                 jsonResponse = "{versionID:"+clientVersionID+"}";
             }
