@@ -110,7 +110,7 @@ td
     font-weight: bold;
     font-size: 11px;
     background-color: azure;
-    
+
 
     /*margin:auto;*/
 
@@ -126,8 +126,8 @@ td
 }
 .soldier{
     position: absolute;
-/*    top:354px;
-    left:2px;*/
+    /*    top:354px;
+        left:2px;*/
     text-align: center;
     width: 32px;
     height: 44px;
@@ -152,22 +152,34 @@ td
     //    border-radius: 15px;
 }
 
-/*input {
-    margin-top: 5px;
-    margin-bottom: 5px;
-    display:inline-block;
-    *display: inline;      for IE7
-    zoom:1;               for IE7
-    vertical-align:middle;
-    margin-left:20px
+.currPlayer{
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    right: -450px;
+    top: 10px;
 }
 
-label {
-    display:inline-block;
-    *display: inline;      for IE7
-    zoom:1;               for IE7
-    float: left;
-    padding-top: 5px;
-    text-align: right;
-    width: 140px;
-}*/
+.currenPlayerLabel
+{
+    position: absolute;
+    font-weight: bold;
+
+    margin: auto;
+
+}
+
+.currPlayerPic
+{
+    position: absolute;
+    margin: auto;
+    top: 80px;
+    width: 200px;
+    height: 200px;
+}
+
+.currPlayerName
+{
+    text-decoration: underline;
+    font-size: 40px
+}
