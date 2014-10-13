@@ -12,12 +12,19 @@ and open the template in the editor.
         <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
         <script type="text/javascript" src="js/game.js"></script>
         <link rel="stylesheet" type="text/css" href="css/snakesandladders.css">
+        <link rel="shortcut icon" href="images/favicon.ico" />
         <!--<link rel="stylesheet" type="text/css" href="css/bootstrap.css">-->
     </head>
 
     <body>
         <audio id="diceSound" >
-            <source src="audio/diceSound.WAV" type="audio/wav">
+            <source src="audio/diceSound.WAV" type="audio/wav">            
+        </audio>
+        <audio id="snakeSound" >
+            <source src="audio/Snake.wav" type="audio/wav">            
+        </audio>
+        <audio id="ladderSound" >
+            <source src="audio/Ladder.wav" type="audio/wav">            
         </audio>
         <div id="background">
             <img src="images/backgroundPics/cloudlandscape.jpg" class="stretch" alt="" />
@@ -42,14 +49,11 @@ and open the template in the editor.
                     </div>
             </div>
             <div title="Click on the dice to start your turn" class="dice"></div>
-<<<<<<< HEAD
 
             <div class="currPlayer">
-                <label class="currenPlayerLabel">Current Player: <br><span class="currPlayerName">Roei</span></label>
-                <img src="images/humanPlayerPics/human1big.png" class="currPlayerPic">
+                <!--                <label class="currenPlayerLabel">Current Player: <br><span class="currPlayerName">Roei</span></label>
+                                <img src="images/humanPlayerPics/human1big.png" class="currPlayerPic">-->
             </div>
-=======
->>>>>>> 422fb25a4390d60dd3480007bf43ae10ae17e497
             <img src="images/arrow.gif" id="arrow">
             <label id = "gameStatus"></label>
             <div>
@@ -59,7 +63,7 @@ and open the template in the editor.
 
         </div>
 
-        <!--/soldier-->
+
 
     </body>
 </html>

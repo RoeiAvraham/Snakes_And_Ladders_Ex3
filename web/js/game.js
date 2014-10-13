@@ -166,6 +166,7 @@ function ajaxJoinedPlayerList()
         url: "getjoinedplayers",
         success: function(r) {
             refreshPlayerList(r);
+            //gameStarted:
             if (r.howManyLeftToJoin == 0 && !isGameStarted)
             {
                 isGameStarted = true;
@@ -183,16 +184,21 @@ function ajaxJoinedPlayerList()
                     initComponentsForNewTurn();
                 }
                 else {
+                    $(".dice").css('background-image', 'url(\'images/wait.gif\')');
                     if (currPlayerType == "COMP")
                     {
+                        $(".currPlayer").html('<label class="currenPlayerLabel">Current Player: <br><span class="currPlayerName">' + currPlayerName + '</span></label><img src="images/computerPlayerPics/comp' + currPlayerID + '.png" class="currPlayerPic">');
                         setTimeout(function()
                         {
                             diceRes = 0;
                             playTurn(0);
                         }, 2500);
                     }
+                    else
+                    {
+                        $(".currPlayer").html('<label class="currenPlayerLabel">Current Player: <br><span class="currPlayerName">' + currPlayerName + '</span></label><img src="images/humanPlayerPics/human' + currPlayerID + 'big.png" class="currPlayerPic">');
+                    }
                 }
-                //setIntervalForRequest....each second
             }
             else if (!isWaitingShown && !isGameStarted)
             {
@@ -200,7 +206,6 @@ function ajaxJoinedPlayerList()
                 isWaitingShown = true;
                 $("#gameStatus").slideDown();
             }
-
         }
     });
     return false;
@@ -226,25 +231,28 @@ function requestLastTurnData()
             dataType: "json",
             timeout: 2000,
             success: function(r) {
-
-              if (r.isThereWinner)
+                if (currPlayerType == "COMP")
+                {
+                    $(".currPlayer").html('<label class="currenPlayerLabel">Current Player: <br><span class="currPlayerName">' + currPlayerName + '</span></label><img src="images/computerPlayerPics/comp' + currPlayerID + '.png" class="currPlayerPic">');
+                }
+                else
+                {
+                    $(".currPlayer").html('<label class="currenPlayerLabel">Current Player: <br><span class="currPlayerName">' + currPlayerName + '</span></label><img src="images/humanPlayerPics/human' + currPlayerID + 'big.png" class="currPlayerPic">');
+                }
+                showOtherPlayerTurn(r);
+                if (r.isThereWinner)
                 {
                     //redirect
                     isItMyTurn = true;
-                    showOtherPlayerTurn(r);
                     setTimeout(function() {
                         alert(r.currPlayerName + "won");
                     }, 3000);
 
-                }            
-                else
-                {
-                    showOtherPlayerTurn(r);
-                    currPlayerID = r.newCurrPlayerID;
-                    currPlayerName = r.newCurrPlayerName;
-                    currPlayerType = r.newCurrPlayerType;
-                    versionID = r.versionID;
                 }
+                currPlayerID = r.newCurrPlayerID;
+                currPlayerName = r.newCurrPlayerName;
+                currPlayerType = r.newCurrPlayerType;
+                versionID = r.versionID;
                 if (r.isItPlayerSessionTurn)
                 {
                     setTimeout(function() {
@@ -381,27 +389,39 @@ function playTurn(soldierId) {
             if (r.currPlayerType == "HUMAN")
             {
                 moveSoldier(r, soldierId);
+                versionID = r.versionID;
+                isItMyTurn = false;
+                currPlayerID = r.newCurrPlayerID;
+                currPlayerType = r.newCurrPlayerType;
+                currPlayerName = r.newCurrPlayerName;
+                $(".dice").css('background-image', 'url(\'images/wait.gif\')');
                 if (r.isThereWinner)
                 {
                     //redirect
                     setTimeout(function() {
                         alert(r.currPlayerName + " won!");
                     }, 1500);
-
                 }
-                currPlayerID = r.newCurrPlayerID;
-                currPlayerType = r.newCurrPlayerType;
-                currPlayerName = r.newCurrPlayerName;
-                isItMyTurn = false;
-                versionID = r.versionID;
+                if (r.newCurrPlayerType == "HUMAN")
+                {
+                    $(".currPlayer").html('<label class="currenPlayerLabel">Current Player: <br><span class="currPlayerName">' + currPlayerName + '</span></label><img src="images/humanPlayerPics/human' + currPlayerID + 'big.png" class="currPlayerPic">');
+                }
             }
 
             if (r.newCurrPlayerType == "COMP" && !r.isThereWinner)
             {
-                setTimeout(function() {
+                if (r.currPlayerType == "COMP") {
+                    setTimeout(function() {
+//                    $(".currPlayer").html('<label class="currenPlayerLabel">Current Player: <br><span class="currPlayerName">' + currPlayerName + '</span></label><img src="images/computerPlayerPics/comp' + currPlayerID + '.png" class="currPlayerPic">');
+                        playTurn(0, 0);
+                    }, 2000);
+                }
+                else
+                {
                     playTurn(0, 0);
-                }, 2500);
+                }
             }
+
         }
     });
     return false;
@@ -448,10 +468,20 @@ function moveSoldier(turnData, soldierID)
     {
         topOffset = 46;
     }
-    
+
     if (midDestCell != destCell)
     {
-
+        var audio;
+        if (midDestCell < destCell)
+        {
+            audio = document.getElementById("ladderSound");
+            audio.play();
+        }
+        else
+        {
+            audio = document.getElementById("snakeSound");
+            audio.play();
+        }
         left = $("#cell" + midDestCell).position().left + +leftOffset + "px";
         top = $("#cell" + midDestCell).position().top + +topOffset + "px";
         $(movingSoldier).animate({
@@ -464,8 +494,8 @@ function moveSoldier(turnData, soldierID)
     var isThereAlreadySoldierInDest = soldierAlreadyInDestCell.length;
 
     $(movingSoldier).attr("data-cell", destCell);
-    left = $("#cell" + turnData.turnData.turnDest).position().left + +leftOffset +"px";
-    top = $("#cell" + turnData.turnData.turnDest).position().top + +topOffset+ "px";
+    left = $("#cell" + turnData.turnData.turnDest).position().left + +leftOffset + "px";
+    top = $("#cell" + turnData.turnData.turnDest).position().top + +topOffset + "px";
     $(movingSoldier).animate({
         left: left,
         top: top
@@ -490,20 +520,28 @@ function setSoldiersAction()
     //setInterval(blinkPlayerSoldiers,100);
 
     $("[class='soldier'][data-owner=" + currPlayerID + "]").not("[data-cell=" + (boardSize * boardSize) + "]").click(function() {
-       // clearInterval(blinkPlayerSoldiers);
+        // clearInterval(blinkPlayerSoldiers);
         $("[class='soldier'][data-owner=" + currPlayerID + "]").css("cursor", '');
         $("[class='soldier'][data-owner=" + currPlayerID + "]").off();
         playTurn($(this).attr('data-id'));
     });
 }
 
-var blinkPlayerSoldiers =function()
+var blinkPlayerSoldiers = function()
 {
-     $("[class='soldier'][data-owner=" + currPlayerID + "]").not("[data-cell=" + (boardSize * boardSize) + "]").fadeOut(500).fadeIn(500);
+    $("[class='soldier'][data-owner=" + currPlayerID + "]").not("[data-cell=" + (boardSize * boardSize) + "]").fadeOut(500).fadeIn(500);
 };
 function initComponentsForNewTurn()
 {
     //set player pic
     $("#arrow").show();
     setDiceAction();
+    if (currPlayerType == "COMP")
+    {
+        $(".currPlayer").html('<label class="currenPlayerLabel">Current Player: <br><span class="currPlayerName">' + currPlayerName + '</span></label><img src="images/computerPlayerPics/comp' + currPlayerID + '.png" class="currPlayerPic">');
+    }
+    else
+    {
+        $(".currPlayer").html('<label class="currenPlayerLabel">Current Player: <br><span class="currPlayerName">' + currPlayerName + '</span></label><img src="images/humanPlayerPics/human' + currPlayerID + 'big.png" class="currPlayerPic">');
+    }
 }
