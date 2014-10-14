@@ -5,7 +5,6 @@
  */
 package servlets;
 
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
@@ -18,14 +17,13 @@ import model.Game;
 import model.GameManager;
 import utilities.ServletUtils;
 import utilities.SessionUtils;
-import utilities.TurnInfo;
 
 /**
  *
- * @author Anat
+ * @author roei.avraham
  */
-@WebServlet(name = "GetLastTurnDataServlet", urlPatterns = {"/lastturn"})
-public class GetLastTurnDataServlet extends HttpServlet {
+@WebServlet(name = "StartTimerServlet", urlPatterns = {"/starttimer"})
+public class StartTimerServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,38 +36,15 @@ public class GetLastTurnDataServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("application/json");
-        try (PrintWriter out = response.getWriter()) {
-
-            Date currDate = new Date();
+        
+         try (PrintWriter out = response.getWriter()) {
+        
             String gameNameFromSession = SessionUtils.getGameName(request);
             GameManager gameManager = ServletUtils.getGameManager(getServletContext());
             Game currGame = gameManager.getGames().get(gameNameFromSession);
-
-            Integer serverVersionID = ServletUtils.getTurnInfoFromServletContext(gameNameFromSession, getServletContext()).getVersionId();
-            Integer clientVersionID = Integer.parseInt(request.getParameter("versionID"));
-            String playerNameFromSession = (String) request.getSession().getAttribute("playerName");
-            Gson gson = new Gson();
-            String jsonResponse;
             
-            TurnInfo ti = ServletUtils.getTurnInfoFromServletContext(gameNameFromSession, getServletContext());
-            
-            if (clientVersionID < serverVersionID) {
-                ti.setHasAnyPlayerLeft(false);
-                if (playerNameFromSession.equals(ti.getNextPlayerName())) {
-                    ti.setIsPlayerSessionTurn(true);
-                } else {
-                    ti.setIsPlayerSessionTurn(false);
-                }
-                jsonResponse = gson.toJson(ti); 
-            } else {
-                jsonResponse = "{versionID:" + clientVersionID + "}";
-            }
-
-            out.print(jsonResponse);
-            out.flush();
+            currGame.setLastPlayTime(new Date());
         }
-
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

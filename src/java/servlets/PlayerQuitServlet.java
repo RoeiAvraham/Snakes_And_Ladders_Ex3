@@ -17,6 +17,7 @@ import model.GameManager;
 import model.Player;
 import model.Player.PlayerType;
 import utilities.Constants;
+import utilities.QuitPlayer;
 import utilities.ServletUtils;
 import utilities.SessionUtils;
 import utilities.TurnInfo;
@@ -46,11 +47,11 @@ public class PlayerQuitServlet extends HttpServlet {
         Game currGame = gameManager.getGames().get(gameNameFromSession);
         String playerNameFromSession = (String) request.getSession().getAttribute(Constants.PLAYER_NAME);
         
-        TurnInfo ti = new TurnInfo(null, null, null, null, null, null, null, false, null);
+        QuitPlayer qp = new QuitPlayer();
         
         if (currGame.isGameStarted())
         {
-            ServletUtils.retirePlayerFromGame(getServletContext(),currGame, playerNameFromSession,ti);
+            ServletUtils.retirePlayerFromGame(getServletContext(),currGame, playerNameFromSession, qp);
         }
         else
         {
@@ -67,8 +68,14 @@ public class PlayerQuitServlet extends HttpServlet {
         }
         else if (currGame.isWinner(currGame.getPlayerList().getFirst()))
         {
-            ti.setIsThereWinner(true);
-            ServletUtils.SetTurnInfoInServletContext(gameNameFromSession, ti, getServletContext());
+            qp.setIsThereWinner(true);
+            ServletUtils.SetQuitPlayerInServletContext(gameNameFromSession, qp, getServletContext());
+        }
+        else
+        {
+            qp.setNextPlayerName(currGame.getCurrPlayer().getPlayerName());
+            qp.setNextPlayerID(currGame.getCurrPlayer().getPlayerNum());
+            qp.setNextPlayerType(currGame.getCurrPlayer().getType());
         }
         response.sendRedirect("");
     }

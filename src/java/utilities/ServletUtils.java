@@ -13,15 +13,13 @@ import model.Player.PlayerType;
 import servlets.GetGameInfoServlet;
 import servlets.GetGameInfoServlet.SnakeOrLadder;
 
-/**
- *
- * @author blecherl
- */
+
 public class ServletUtils {
 
     private static final String GAME_MANAGER_ATTRIBUTE_NAME = "gameManager";
     private static final String GAME_XML_ATTRIBUTE_NAME = "xmlGame";
     private static final String TURN_INFO_MAP_ATTRIBUTE_NAME = "turnInfoMap";
+    private static final String QUIT_PLAYER_MAP_ATTRIBUTE_NAME = "quitPlayerMap";
 
     public static GameManager getGameManager(ServletContext servletContext) {
         if (servletContext.getAttribute(GAME_MANAGER_ATTRIBUTE_NAME) == null) {
@@ -89,8 +87,6 @@ public class ServletUtils {
     public static ArrayList<String> getJoinedPlayerNames(Game game) {
         ArrayList<String> names = new ArrayList<>();
 
-        int i = 0;
-
         for (Player p : game.getPlayerList()) {
             if (p.isJoined()) {
                 names.add(p.getPlayerName());
@@ -143,22 +139,43 @@ public class ServletUtils {
         return (TurnInfoMap) servletContext.getAttribute(TURN_INFO_MAP_ATTRIBUTE_NAME);
     }
     
-    public static void retirePlayerFromGame(ServletContext servletContext, Game currGame, String playerLeftName, TurnInfo ti)
+    public static QuitPlayerMap getQuitPlayerMap(ServletContext servletContext) {
+        if (servletContext.getAttribute(QUIT_PLAYER_MAP_ATTRIBUTE_NAME) == null) {
+            servletContext.setAttribute(QUIT_PLAYER_MAP_ATTRIBUTE_NAME, new QuitPlayerMap(new HashMap<String, QuitPlayer>()));
+        }
+        return (QuitPlayerMap) servletContext.getAttribute(QUIT_PLAYER_MAP_ATTRIBUTE_NAME);
+    }
+    
+    public static void SetQuitPlayerInServletContext(String gameName, QuitPlayer qp, ServletContext servletContext) {
+        QuitPlayerMap qpMap = getQuitPlayerMap(servletContext);
+        qpMap.putQuitPlayer(gameName, qp);
+    }
+
+    public static QuitPlayer getQuitPlayerFromServletContext(String gameName, ServletContext servletContext) {
+        QuitPlayerMap qpMap = getQuitPlayerMap(servletContext);
+        return qpMap.getQuitPlayer(gameName);
+    }
+    
+    public static void retirePlayerFromGame(ServletContext servletContext, Game currGame, String playerLeftName, QuitPlayer qp)
     {
         currGame.setLastPlayTime(new Date());
+        
+        if (getQuitPlayerFromServletContext(currGame.getGameName(), servletContext) == null)
+        {
+            SetQuitPlayerInServletContext(currGame.getGameName(), new QuitPlayer(), servletContext);
+        }
         
         if (playerLeftName.equals(currGame.getCurrPlayer().getPlayerName()))
         {
             currGame.advanceTurnToNextPlayer();
         }
-        
+        qp.setPlayerLeftID(currGame.getPlayerNumByName(playerLeftName));
         currGame.removePlayerFromGame(currGame.getPlayerByName(playerLeftName));
-        ti.setHasAnyPlayerLeft(true);
-        ti.setPlayerLeftName(playerLeftName);
-        ti.setPlayerLeftID(currGame.getPlayerNumByName(playerLeftName));
+        qp.setHasAnyPlayerLeft(true);
+        qp.setPlayerLeftName(playerLeftName);
         
-        int currVersion = ServletUtils.getTurnInfoFromServletContext(currGame.getGameName(), servletContext).getVersionId();
-        ti.setVersionId(currVersion + 1);
-        ServletUtils.SetTurnInfoInServletContext(currGame.getGameName(), ti, servletContext);
+        int currQuitVersion = ServletUtils.getQuitPlayerFromServletContext(currGame.getGameName(), servletContext).getQuitVersionID();
+        qp.setQuitVersionID(currQuitVersion + 1);
+        ServletUtils.SetQuitPlayerInServletContext(currGame.getGameName(), qp, servletContext);
     }
 }

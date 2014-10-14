@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import model.Game;
 import model.GameManager;
 import utilities.Constants;
+import utilities.QuitPlayer;
 import utilities.ServletUtils;
 import utilities.SessionUtils;
 import utilities.TurnInfo;
@@ -43,21 +44,31 @@ public class HasAnyPlayerLeftServlet extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
 
             Date currDate = new Date();
-            String gameNameFromSession = SessionUtils.getGameName(request);
+            Integer quitClientVersionID = Integer.parseInt(request.getParameter("quitVersionID"));
+            
             GameManager gameManager = ServletUtils.getGameManager(getServletContext());
+            String gameNameFromSession = SessionUtils.getGameName(request);
             Game currGame = gameManager.getGames().get(gameNameFromSession);
-            TurnInfo ti = ServletUtils.getTurnInfoFromServletContext(gameNameFromSession, getServletContext());
+            
+            Integer quitServerVersionID = ServletUtils.getQuitPlayerFromServletContext(gameNameFromSession, getServletContext()).getQuitVersionID();
+            
+          
+            QuitPlayer qp = ServletUtils.getQuitPlayerFromServletContext(gameNameFromSession, getServletContext());
 
-            if (ti.isHasAnyPlayerLeft()) {
-                Gson gson = new Gson();
-                String jsonResponse = gson.toJson(ti);
-                out.print(jsonResponse);
-                out.flush();
+            if (quitClientVersionID < quitServerVersionID) {
+                qp.setHasAnyPlayerLeft(true);
             } else {
-                if (((Integer.parseInt(currDate.toString()) - Integer.parseInt(currGame.getLastPlayTime().toString())) / 1000) > Constants.SERVER_TIMEOUT) {
-                    ServletUtils.retirePlayerFromGame(getServletContext(), currGame, currGame.getCurrPlayer().getPlayerName(), ti);
-                }
+//                if (((Integer.parseInt(currDate.toString()) - Integer.parseInt(currGame.getLastPlayTime().toString())) / 1000) > Constants.SERVER_TIMEOUT) {
+//                    ServletUtils.retirePlayerFromGame(getServletContext(), currGame, currGame.getCurrPlayer().getPlayerName(), qp);
+//                }
+                
+                qp.setHasAnyPlayerLeft(false);
             }
+            
+            Gson gson = new Gson();
+            String jsonResponse = gson.toJson(qp);
+            out.print(jsonResponse);
+            out.flush();
         }
     }
 
